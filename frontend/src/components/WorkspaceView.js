@@ -251,7 +251,7 @@ export default function WorkspaceView() {
                     </TableRow>
                   </TableHeader>
                 <TableBody>
-                  {filteredDocuments.map((doc) => (
+                  {paginatedDocuments.map((doc) => (
                     <TableRow key={doc.id} data-testid={`document-row-${doc.id}`}>
                       <TableCell className="font-medium">
                         <div className="flex items-center gap-2">
@@ -259,7 +259,6 @@ export default function WorkspaceView() {
                           {doc.file_name}
                         </div>
                       </TableCell>
-                      <TableCell className="text-sm text-slate-600">{doc.file_path}</TableCell>
                       {visibleFields.map(field => (
                         <TableCell key={field.id} className="text-sm">
                           {doc.metadata?.[field.name] || '-'}
