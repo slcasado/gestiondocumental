@@ -145,14 +145,35 @@ export default function WorkspaceView() {
   };
 
   const handleAddDocument = async () => {
+    // Validate JSON before submitting
     try {
-      await api.createDocument(workspaceId, newDocData);
+      const metadata = JSON.parse(newDocMetadataText);
+      const docData = { ...newDocData, metadata };
+      
+      await api.createDocument(workspaceId, docData);
       toast.success('Documento creado');
       setAddDocModalOpen(false);
       setNewDocData({ file_name: '', file_path: '', metadata: {} });
+      setNewDocMetadataText('{}');
+      setMetadataError('');
       loadDocuments();
     } catch (error) {
-      toast.error('Error al crear documento');
+      if (error instanceof SyntaxError) {
+        setMetadataError('JSON inválido. Por favor, corrija el formato.');
+        toast.error('Error: JSON de metadatos inválido');
+      } else {
+        toast.error('Error al crear documento');
+      }
+    }
+  };
+
+  const handleMetadataTextChange = (text) => {
+    setNewDocMetadataText(text);
+    try {
+      JSON.parse(text);
+      setMetadataError('');
+    } catch (err) {
+      setMetadataError('JSON inválido');
     }
   };
 
