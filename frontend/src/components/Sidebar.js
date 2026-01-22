@@ -3,8 +3,10 @@ import { Link, useLocation } from 'react-router-dom';
 import { Button } from './ui/button';
 import { ScrollArea } from './ui/scroll-area';
 import { Separator } from './ui/separator';
-import { FileText, Users, Tag, FolderOpen, Settings, LogOut, Key } from 'lucide-react';
+import { Users, Tag, FolderOpen, Settings, LogOut, Key } from 'lucide-react';
 import { cn } from '../lib/utils';
+
+const LOGO_URL = "https://customer-assets.emergentagent.com/job_a739615c-f1b8-4bd3-af53-bfce43a6f5fc/artifacts/23euucvr_logo%20costa%20doc.png";
 
 export default function Sidebar({ workspaces }) {
   const { user, logout } = useAuth();
@@ -15,9 +17,13 @@ export default function Sidebar({ workspaces }) {
 
   return (
     <div className="w-64 border-r border-costa-blue-light bg-white h-screen fixed left-0 top-0 z-30 flex flex-col" data-testid="sidebar">
-      <div className="p-6 border-b border-costa-blue-light bg-gradient-to-r from-costa-blue to-costa-blue/90">
-        <h1 className="text-xl font-bold tracking-tight text-white">Costa_Doc</h1>
-        <p className="text-sm text-costa-blue-light mt-1">{user?.email}</p>
+      <div className="p-4 border-b border-costa-blue-light bg-white">
+        <img 
+          src={LOGO_URL} 
+          alt="Costa Doc" 
+          className="h-12 w-auto"
+        />
+        <p className="text-xs text-slate-500 mt-2">{user?.email}</p>
       </div>
 
       <ScrollArea className="flex-1 py-4">
