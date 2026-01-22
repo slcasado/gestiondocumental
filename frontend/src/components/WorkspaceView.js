@@ -27,6 +27,12 @@ export default function WorkspaceView() {
   const [publicUrlModalOpen, setPublicUrlModalOpen] = useState(false);
   const [selectedDocForUrl, setSelectedDocForUrl] = useState(null);
   const [loading, setLoading] = useState(true);
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(50);
+  const [paginatedDocuments, setPaginatedDocuments] = useState([]);
+  const [totalPages, setTotalPages] = useState(0);
 
   useEffect(() => {
     loadWorkspace();
