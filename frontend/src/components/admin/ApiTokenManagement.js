@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import api from '../../utils/api';
+import axios from 'axios';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../ui/card';
@@ -11,6 +11,8 @@ import { Textarea } from '../ui/textarea';
 import { toast } from 'sonner';
 import { Plus, Trash2, Copy, Key, AlertTriangle, Check, Eye, EyeOff } from 'lucide-react';
 import { formatDate } from '../../utils/dateFormat';
+
+const API_URL = process.env.REACT_APP_BACKEND_URL;
 
 export default function ApiTokenManagement() {
   const [tokens, setTokens] = useState([]);
@@ -30,7 +32,7 @@ export default function ApiTokenManagement() {
 
   const loadTokens = useCallback(async () => {
     try {
-      const response = await api.get('/api/admin/api-tokens');
+      const response = await axios.get(`${API_URL}/api/admin/api-tokens`);
       setTokens(response.data);
     } catch (error) {
       toast.error('Error al cargar los tokens');
@@ -41,7 +43,7 @@ export default function ApiTokenManagement() {
 
   const loadPermissions = useCallback(async () => {
     try {
-      const response = await api.get('/api/admin/api-tokens/permissions');
+      const response = await axios.get(`${API_URL}/api/admin/api-tokens/permissions`);
       setPermissions(response.data.permissions);
     } catch (error) {
       console.error('Error loading permissions:', error);
@@ -64,7 +66,7 @@ export default function ApiTokenManagement() {
     }
 
     try {
-      const response = await api.post('/api/admin/api-tokens', formData);
+      const response = await axios.post(`${API_URL}/api/admin/api-tokens`, formData);
       setNewToken(response.data);
       setShowCreateModal(false);
       setShowTokenModal(true);
@@ -80,7 +82,7 @@ export default function ApiTokenManagement() {
     if (!selectedToken) return;
 
     try {
-      await api.delete(`/api/admin/api-tokens/${selectedToken.id}`);
+      await axios.delete(`${API_URL}/api/admin/api-tokens/${selectedToken.id}`);
       setShowDeleteModal(false);
       setSelectedToken(null);
       loadTokens();
