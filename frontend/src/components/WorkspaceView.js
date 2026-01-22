@@ -10,6 +10,7 @@ import { Search, Edit, Trash2, ExternalLink, FileText, Plus, Link2, Copy, AlertC
 import { toast } from 'sonner';
 import api from '../utils/api';
 import { formatDateSpanish } from '../utils/dateFormat';
+import { copyToClipboard } from '../utils/clipboard';
 
 export default function WorkspaceView() {
   const { workspaceId } = useParams();
