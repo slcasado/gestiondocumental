@@ -392,6 +392,7 @@ export default function ApiTokenManagement() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      </div>
     </div>
   );
 }
