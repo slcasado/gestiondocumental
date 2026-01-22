@@ -315,7 +315,9 @@ def main():
     tester.test_list_teams()
 
     # Test 6: Metadata Management
-    tester.test_create_metadata("Category", "text")
+    timestamp = datetime.now().strftime("%H%M%S")
+    meta_name = f"Category {timestamp}"
+    tester.test_create_metadata(meta_name, "text")
     tester.test_list_metadata()
 
     # Test 7: Workspace Management
