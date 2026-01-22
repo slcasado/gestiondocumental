@@ -10,11 +10,11 @@ import { Switch } from '../ui/switch';
 import { Plus, Edit, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '../../utils/api';
-import Sidebar from '../Sidebar';
+
 
 export default function MetadataManagement() {
   const [metadata, setMetadata] = useState([]);
-  const [workspaces, setWorkspaces] = useState([]);
+  
   const [editingMeta, setEditingMeta] = useState(null);
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [formData, setFormData] = useState({ name: '', field_type: 'text', visible: true, options: [] });
@@ -25,12 +25,12 @@ export default function MetadataManagement() {
 
   const loadData = async () => {
     try {
-      const [metaRes, workspacesRes] = await Promise.all([
+      const [metaRes] = await Promise.all([
         api.getMetadata(),
-        api.getWorkspaces()
+        
       ]);
       setMetadata(metaRes.data);
-      setWorkspaces(workspacesRes.data);
+      
     } catch (error) {
       toast.error('Error al cargar datos');
     }
@@ -82,8 +82,8 @@ export default function MetadataManagement() {
   };
 
   return (
-    <>
-      <Sidebar workspaces={workspaces} />
+    <div className="flex-1 md:pl-64 min-h-screen bg-slate-50/50" data-testid="metadata-management">
+      
       <div className="flex-1 md:pl-64 min-h-screen bg-slate-50/50" data-testid="metadata-management">
         <div className="p-8">
           <div className="flex justify-between items-center mb-6">
@@ -191,6 +191,6 @@ export default function MetadataManagement() {
           </div>
         </DialogContent>
       </Dialog>
-    </>
+      </div>
   );
 }
