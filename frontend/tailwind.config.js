@@ -57,6 +57,12 @@ module.exports = {
                                 '3': 'hsl(var(--chart-3))',
                                 '4': 'hsl(var(--chart-4))',
                                 '5': 'hsl(var(--chart-5))'
+                        },
+                        costa: {
+                                yellow: '#FDB825',
+                                'yellow-bright': '#FFE615',
+                                blue: '#004680',
+                                'blue-light': '#D2D8E8'
                         }
                 },
                 keyframes: {
