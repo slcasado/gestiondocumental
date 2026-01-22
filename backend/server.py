@@ -626,10 +626,16 @@ async def view_public_document(public_url: str):
 
 app.include_router(api_router)
 
+# CORS Configuration - Restrict to specific origins in production
+allowed_origins = os.environ.get('CORS_ORIGINS', '*')
+if allowed_origins == '*':
+    logger.warning("⚠️  WARNING: CORS is set to allow all origins. Configure CORS_ORIGINS for production!")
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
-    allow_methods=["*"],
+    allow_origins=allowed_origins.split(',') if allowed_origins != '*' else ['*'],
+    allow_methods=["GET", "POST", "PUT", "DELETE"],
     allow_headers=["*"],
+    max_age=3600,
 )
