@@ -359,6 +359,67 @@ export default function WorkspaceView() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Public URL Modal */}
+      <Dialog open={publicUrlModalOpen} onOpenChange={setPublicUrlModalOpen}>
+        <DialogContent className="max-w-2xl" data-testid="public-url-modal">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Link2 className="h-5 w-5" />
+              URL Pública del Documento
+            </DialogTitle>
+            <DialogDescription>
+              Comparta esta URL para que otros puedan visualizar el documento sin necesidad de iniciar sesión
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 mt-4">
+            <div>
+              <Label className="text-sm font-medium mb-2 block">Documento</Label>
+              <p className="text-base font-medium">{selectedDocForUrl?.file_name}</p>
+            </div>
+            <div>
+              <Label className="text-sm font-medium mb-2 block">URL Pública</Label>
+              <div className="flex gap-2">
+                <Input
+                  value={selectedDocForUrl ? `${window.location.origin}/public/${selectedDocForUrl.public_url}` : ''}
+                  readOnly
+                  className="font-mono text-sm"
+                  data-testid="public-url-input"
+                />
+                <Button
+                  onClick={copyPublicUrl}
+                  variant="outline"
+                  data-testid="copy-url-button"
+                >
+                  <Copy className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <p className="text-sm text-blue-800">
+                <AlertCircle className="inline h-4 w-4 mr-2" />
+                <strong>Nota:</strong> Esta URL permite visualizar e imprimir el documento, pero no descargarlo. Ideal para compartir de forma segura.
+              </p>
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button
+                variant="outline"
+                onClick={() => setPublicUrlModalOpen(false)}
+              >
+                Cerrar
+              </Button>
+              <Button
+                onClick={() => window.open(`/public/${selectedDocForUrl?.public_url}`, '_blank')}
+                className="bg-primary hover:bg-primary/90"
+                data-testid="open-public-view-button"
+              >
+                <ExternalLink className="mr-2 h-4 w-4" />
+                Abrir Vista Pública
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
