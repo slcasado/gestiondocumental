@@ -10,7 +10,7 @@ import { Checkbox } from '../ui/checkbox';
 import { Textarea } from '../ui/textarea';
 import { toast } from 'sonner';
 import { Plus, Trash2, Copy, Key, AlertTriangle, Check, Eye, EyeOff } from 'lucide-react';
-import { formatDate } from '../../utils/dateFormat';
+import { formatDateTimeSpanish } from '../../utils/dateFormat';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
