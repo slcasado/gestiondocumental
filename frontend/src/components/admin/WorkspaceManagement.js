@@ -224,6 +224,6 @@ export default function WorkspaceManagement() {
           </div>
         </DialogContent>
       </Dialog>
-</div>
+    </div>
   );
 }
