@@ -136,7 +136,6 @@ export default function TeamManagement() {
             </CardContent>
           </Card>
         </div>
-      </div>
 
       <Dialog open={!!editingTeam || addModalOpen} onOpenChange={() => { setEditingTeam(null); setAddModalOpen(false); }}>
         <DialogContent data-testid="team-form-modal">
