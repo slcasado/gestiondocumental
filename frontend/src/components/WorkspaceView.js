@@ -222,13 +222,9 @@ export default function WorkspaceView() {
                           <Button
                             size="sm"
                             variant="ghost"
-                            onClick={() => {
-                              const publicUrl = `${window.location.origin}/public/${doc.public_url}`;
-                              navigator.clipboard.writeText(publicUrl);
-                              toast.success('URL pública copiada al portapapeles');
-                            }}
-                            title="Copiar URL pública"
-                            data-testid={`copy-public-url-${doc.id}`}
+                            onClick={() => handleShowPublicUrl(doc)}
+                            title="Ver URL pública"
+                            data-testid={`show-public-url-${doc.id}`}
                           >
                             <Link2 className="h-4 w-4" />
                           </Button>
