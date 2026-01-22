@@ -9,12 +9,10 @@ import { Textarea } from '../ui/textarea';
 import { Plus, Edit, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '../../utils/api';
-import Sidebar from '../Sidebar';
 
 export default function TeamManagement() {
   const [teams, setTeams] = useState([]);
   const [users, setUsers] = useState([]);
-  const [workspaces, setWorkspaces] = useState([]);
   const [editingTeam, setEditingTeam] = useState(null);
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [formData, setFormData] = useState({ name: '', description: '', user_ids: [] });
@@ -25,14 +23,12 @@ export default function TeamManagement() {
 
   const loadData = async () => {
     try {
-      const [teamsRes, usersRes, workspacesRes] = await Promise.all([
+      const [teamsRes, usersRes] = await Promise.all([
         api.getTeams(),
-        api.getUsers(),
-        api.getWorkspaces()
+        api.getUsers()
       ]);
       setTeams(teamsRes.data);
       setUsers(usersRes.data);
-      setWorkspaces(workspacesRes.data);
     } catch (error) {
       toast.error('Error al cargar datos');
     }
@@ -174,6 +170,6 @@ export default function TeamManagement() {
           </div>
         </DialogContent>
       </Dialog>
-    </>
+    </div>
   );
 }
