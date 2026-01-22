@@ -151,3 +151,24 @@ class ApiTokenUpdate(BaseModel):
     name: Optional[str] = None
     description: Optional[str] = None
     permissions: Optional[List[ApiTokenPermission]] = None
+
+class ApiTokenResponse(BaseModel):
+    """Response model that hides the actual token after creation"""
+    model_config = ConfigDict(extra="ignore")
+    id: str
+    name: str
+    description: Optional[str] = None
+    permissions: List[ApiTokenPermission]
+    created_by: str
+    created_at: datetime
+    last_used: Optional[datetime] = None
+    token_preview: str  # Only shows last 8 characters
+
+class ApiTokenCreateResponse(BaseModel):
+    """Response model for token creation - shows full token ONCE"""
+    id: str
+    name: str
+    description: Optional[str] = None
+    permissions: List[ApiTokenPermission]
+    token: str  # Full token shown only at creation
+    created_at: datetime

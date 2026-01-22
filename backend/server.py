@@ -13,13 +13,17 @@ from typing import List, Optional
 import uuid
 from datetime import datetime, timezone
 import shutil
+import secrets
+import hashlib
 
 from models import (
     User, UserCreate, UserUpdate, LoginRequest, ChangePasswordRequest, TokenResponse,
     Team, TeamCreate, TeamUpdate,
     MetadataDefinition, MetadataDefinitionCreate, MetadataDefinitionUpdate,
     Workspace, WorkspaceCreate, WorkspaceUpdate,
-    Document, DocumentCreate, DocumentUpdate, UserRole
+    Document, DocumentCreate, DocumentUpdate, UserRole,
+    ApiToken, ApiTokenCreate, ApiTokenUpdate, ApiTokenPermission,
+    ApiTokenResponse, ApiTokenCreateResponse
 )
 from auth import verify_password, get_password_hash, create_access_token, decode_access_token
 from security import (
