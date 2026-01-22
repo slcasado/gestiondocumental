@@ -488,7 +488,16 @@ async def view_document(doc_id: str, current_user: User = Depends(get_current_us
     if not doc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Document not found")
     
-    file_path = Path(doc["file_path"])
+    file_path_str = doc["file_path"]
+    
+    # Check if it's an external URL
+    if file_path_str.startswith(('http://', 'https://')):
+        # Return a redirect response for external URLs
+        from fastapi.responses import RedirectResponse
+        return RedirectResponse(url=file_path_str)
+    
+    # Local file handling
+    file_path = Path(file_path_str)
     if not file_path.exists():
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="File not found")
     
@@ -500,7 +509,16 @@ async def view_public_document(public_url: str):
     if not doc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Document not found")
     
-    file_path = Path(doc["file_path"])
+    file_path_str = doc["file_path"]
+    
+    # Check if it's an external URL
+    if file_path_str.startswith(('http://', 'https://')):
+        # Return a redirect response for external URLs
+        from fastapi.responses import RedirectResponse
+        return RedirectResponse(url=file_path_str)
+    
+    # Local file handling
+    file_path = Path(file_path_str)
     if not file_path.exists():
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="File not found")
     
