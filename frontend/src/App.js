@@ -8,6 +8,7 @@ import UserManagement from './components/admin/UserManagement';
 import TeamManagement from './components/admin/TeamManagement';
 import MetadataManagement from './components/admin/MetadataManagement';
 import WorkspaceManagement from './components/admin/WorkspaceManagement';
+import MainLayout from './components/MainLayout';
 import '@/App.css';
 
 function ProtectedRoute({ children, adminOnly = false }) {
@@ -56,7 +57,9 @@ function AppRoutes() {
         path="/workspace/:workspaceId"
         element={
           <ProtectedRoute>
-            <WorkspaceView />
+            <MainLayout>
+              <WorkspaceView />
+            </MainLayout>
           </ProtectedRoute>
         }
       />
