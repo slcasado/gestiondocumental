@@ -42,7 +42,7 @@ export default function LoginPage() {
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-primary/10 mb-4">
             <FileText className="w-10 h-10 text-primary" />
           </div>
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">DocuSphere</h1>
+          <h1 className="text-3xl font-bold text-slate-900 mb-2">Costa_Doc</h1>
           <p className="text-slate-600">Sistema de Gestión de Documentos</p>
         </div>
 
