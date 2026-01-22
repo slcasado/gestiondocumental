@@ -133,16 +133,37 @@ export default function WorkspaceView() {
       file_path: doc.file_path,
       metadata: doc.metadata || {}
     });
+    setEditMetadataText(JSON.stringify(doc.metadata || {}, null, 2));
+    setEditMetadataError('');
   };
 
   const handleSaveEdit = async () => {
     try {
-      await api.updateDocument(editingDoc.id, editFormData);
+      const metadata = JSON.parse(editMetadataText);
+      const updateData = { ...editFormData, metadata };
+      
+      await api.updateDocument(editingDoc.id, updateData);
       toast.success('Documento actualizado');
       setEditingDoc(null);
+      setEditMetadataError('');
       loadDocuments();
     } catch (error) {
-      toast.error('Error al actualizar documento');
+      if (error instanceof SyntaxError) {
+        setEditMetadataError('JSON inválido. Por favor, corrija el formato.');
+        toast.error('Error: JSON de metadatos inválido');
+      } else {
+        toast.error('Error al actualizar documento');
+      }
+    }
+  };
+
+  const handleEditMetadataTextChange = (text) => {
+    setEditMetadataText(text);
+    try {
+      JSON.parse(text);
+      setEditMetadataError('');
+    } catch (err) {
+      setEditMetadataError('JSON inválido');
     }
   };
 
