@@ -162,7 +162,6 @@ export default function WorkspaceManagement() {
             </CardContent>
           </Card>
         </div>
-      </div>
 
       <Dialog open={!!editingWorkspace || addModalOpen} onOpenChange={() => { setEditingWorkspace(null); setAddModalOpen(false); }}>
         <DialogContent className="max-w-2xl" data-testid="workspace-form-modal">
