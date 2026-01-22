@@ -141,7 +141,6 @@ export default function MetadataManagement() {
             </CardContent>
           </Card>
         </div>
-      </div>
 
       <Dialog open={!!editingMeta || addModalOpen} onOpenChange={() => { setEditingMeta(null); setAddModalOpen(false); }}>
         <DialogContent data-testid="metadata-form-modal">
