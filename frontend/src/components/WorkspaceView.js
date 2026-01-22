@@ -131,11 +131,17 @@ export default function WorkspaceView() {
     setPublicUrlModalOpen(true);
   };
 
-  const copyPublicUrl = () => {
+  const copyPublicUrl = async () => {
     if (selectedDocForUrl) {
       const publicUrl = `${window.location.origin}/public/${selectedDocForUrl.public_url}`;
-      navigator.clipboard.writeText(publicUrl);
-      toast.success('URL pública copiada al portapapeles');
+      const result = await copyToClipboard(publicUrl);
+      
+      if (result.success) {
+        toast.success('URL pública copiada al portapapeles');
+      } else {
+        // Show input field for manual copy if all methods fail
+        toast.error('No se pudo copiar automáticamente. Seleccione y copie la URL manualmente.');
+      }
     }
   };
 
