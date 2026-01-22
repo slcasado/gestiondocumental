@@ -25,6 +25,8 @@ export default function WorkspaceView() {
   const [editFormData, setEditFormData] = useState({});
   const [addDocModalOpen, setAddDocModalOpen] = useState(false);
   const [newDocData, setNewDocData] = useState({ file_name: '', file_path: '', metadata: {} });
+  const [newDocMetadataText, setNewDocMetadataText] = useState('{}');
+  const [metadataError, setMetadataError] = useState('');
   const [publicUrlModalOpen, setPublicUrlModalOpen] = useState(false);
   const [selectedDocForUrl, setSelectedDocForUrl] = useState(null);
   const [loading, setLoading] = useState(true);
