@@ -392,15 +392,21 @@ export default function WorkspaceView() {
                   readOnly
                   className="font-mono text-sm"
                   data-testid="public-url-input"
+                  onClick={(e) => e.target.select()}
+                  onFocus={(e) => e.target.select()}
                 />
                 <Button
                   onClick={copyPublicUrl}
                   variant="outline"
                   data-testid="copy-url-button"
+                  title="Copiar URL"
                 >
                   <Copy className="h-4 w-4" />
                 </Button>
               </div>
+              <p className="text-xs text-slate-500 mt-1">
+                Haga clic en el campo para seleccionar toda la URL
+              </p>
             </div>
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
               <p className="text-sm text-blue-800">
