@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Button } from './ui/button';
 import { ScrollArea } from './ui/scroll-area';
 import { Separator } from './ui/separator';
-import { FileText, Users, Tag, FolderOpen, Settings, LogOut } from 'lucide-react';
+import { FileText, Users, Tag, FolderOpen, Settings, LogOut, Key } from 'lucide-react';
 import { cn } from '../lib/utils';
 
 export default function Sidebar({ workspaces }) {
@@ -101,6 +101,19 @@ export default function Sidebar({ workspaces }) {
                     >
                       <Settings className="mr-2 h-4 w-4" />
                       Espacios
+                    </Button>
+                  </Link>
+                  <Link to="/admin/api-tokens">
+                    <Button
+                      variant="ghost"
+                      className={cn(
+                        "w-full justify-start",
+                        isActive('/admin/api-tokens') && "bg-costa-yellow/20 text-costa-blue font-medium"
+                      )}
+                      data-testid="admin-api-tokens-link"
+                    >
+                      <Key className="mr-2 h-4 w-4" />
+                      API Tokens
                     </Button>
                   </Link>
                 </div>
