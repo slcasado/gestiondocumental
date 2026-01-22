@@ -693,7 +693,11 @@ async def delete_document(doc_id: str, auth: AuthResult = Depends(get_current_us
 
 @api_router.get("/documents/search", response_model=List[Document])
 @limiter.limit(RATE_LIMIT_API)
-async def search_documents(request: Request, q: str, current_user: User = Depends(get_current_user)):
+async def search_documents(request: Request, q: str, auth: AuthResult = Depends(get_current_user_or_api_token)):
+    # Check permission for API tokens
+    if auth.is_api_token and not auth.has_permission("documents:search"):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="API token lacks documents:search permission")
+    
     # Sanitize search query to prevent NoSQL injection
     search_query = sanitize_string(q, 200)
     
@@ -701,11 +705,14 @@ async def search_documents(request: Request, q: str, current_user: User = Depend
         return []
     
     # Get accessible workspaces
-    if current_user.role == UserRole.ADMIN:
+    if auth.is_api_token:
+        # API tokens can search all workspaces
+        workspaces = await db.workspaces.find({}, {"_id": 0, "id": 1}).to_list(1000)
+    elif auth.user.role == UserRole.ADMIN:
         workspaces = await db.workspaces.find({}, {"_id": 0, "id": 1}).to_list(1000)
     else:
         workspaces = await db.workspaces.find(
-            {"team_ids": {"$in": current_user.team_ids}},
+            {"team_ids": {"$in": auth.user.team_ids}},
             {"_id": 0, "id": 1}
         ).to_list(1000)
     
