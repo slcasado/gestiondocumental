@@ -478,17 +478,16 @@ export default function WorkspaceView() {
               <Label>Metadatos (JSON)</Label>
               <textarea
                 className="w-full p-2 border rounded-md min-h-[100px] font-mono text-sm"
-                value={JSON.stringify(newDocData.metadata, null, 2)}
-                onChange={(e) => {
-                  try {
-                    const parsed = JSON.parse(e.target.value);
-                    setNewDocData({ ...newDocData, metadata: parsed });
-                  } catch (err) {
-                    // Invalid JSON
-                  }
-                }}
+                value={newDocMetadataText}
+                onChange={(e) => handleMetadataTextChange(e.target.value)}
                 data-testid="new-metadata-input"
               />
+              {metadataError && (
+                <p className="text-xs text-red-600 mt-1">{metadataError}</p>
+              )}
+              <p className="text-xs text-slate-500 mt-1">
+                Formato: {`{"Categoría": "Contrato", "Fecha": "2025-01-22"}`}
+              </p>
             </div>
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => setAddDocModalOpen(false)}>Cancelar</Button>
