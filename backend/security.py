@@ -1,8 +1,14 @@
 import os
+from dotenv import load_dotenv
+from pathlib import Path
 import secrets
 import re
 from typing import Optional
 from urllib.parse import urlparse
+
+# Load environment variables first
+ROOT_DIR = Path(__file__).parent
+load_dotenv(ROOT_DIR / '.env')
 
 # JWT Configuration
 JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY")
