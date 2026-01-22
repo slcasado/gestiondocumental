@@ -574,14 +574,19 @@ async def delete_workspace(workspace_id: str, current_user: User = Depends(get_a
 
 # DOCUMENT ENDPOINTS
 @api_router.get("/workspaces/{workspace_id}/documents", response_model=List[Document])
-async def list_documents(workspace_id: str, current_user: User = Depends(get_current_user)):
+async def list_documents(workspace_id: str, auth: AuthResult = Depends(get_current_user_or_api_token)):
+    # Check permission for API tokens
+    if auth.is_api_token and not auth.has_permission("documents:read"):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="API token lacks documents:read permission")
+    
     # Check access
     workspace = await db.workspaces.find_one({"id": workspace_id})
     if not workspace:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Workspace not found")
     
-    if current_user.role != UserRole.ADMIN:
-        if not any(team_id in current_user.team_ids for team_id in workspace.get("team_ids", [])):
+    # API tokens have access to all workspaces, users need team membership
+    if auth.user and auth.user.role != UserRole.ADMIN:
+        if not any(team_id in auth.user.team_ids for team_id in workspace.get("team_ids", [])):
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Access denied")
     
     documents = await db.documents.find(
@@ -599,8 +604,12 @@ async def list_documents(workspace_id: str, current_user: User = Depends(get_cur
 
 @api_router.post("/workspaces/{workspace_id}/documents", response_model=Document)
 @limiter.limit(RATE_LIMIT_API)
-async def create_document(request: Request, workspace_id: str, doc_data: DocumentCreate, current_user: User = Depends(get_current_user)):
+async def create_document(request: Request, workspace_id: str, doc_data: DocumentCreate, auth: AuthResult = Depends(get_current_user_or_api_token)):
     client_ip = get_remote_address(request)
+    
+    # Check permission for API tokens
+    if auth.is_api_token and not auth.has_permission("documents:create"):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="API token lacks documents:create permission")
     
     # Check workspace exists
     workspace = await db.workspaces.find_one({"id": workspace_id})
