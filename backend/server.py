@@ -741,14 +741,19 @@ async def search_documents(request: Request, q: str, auth: AuthResult = Depends(
 
 @api_router.get("/documents/{doc_id}/view")
 @limiter.limit(RATE_LIMIT_API)
-async def view_document(request: Request, doc_id: str, current_user: User = Depends(get_current_user)):
+async def view_document(request: Request, doc_id: str, auth: AuthResult = Depends(get_current_user_or_api_token)):
+    # Check permission for API tokens
+    if auth.is_api_token and not auth.has_permission("documents:read"):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="API token lacks documents:read permission")
+    
     client_ip = get_remote_address(request)
     
     doc = await db.documents.find_one({"id": doc_id}, {"_id": 0})
     if not doc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Document not found")
     
-    log_document_access(current_user.id, doc_id, "VIEW", client_ip)
+    viewer_id = auth.user.id if auth.user else f"api_token:{auth.api_token['id']}"
+    log_document_access(viewer_id, doc_id, "VIEW", client_ip)
     
     file_path_str = doc["file_path"]
     
