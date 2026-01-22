@@ -466,7 +466,11 @@ async def delete_team(team_id: str, current_user: User = Depends(get_admin_user)
 
 # METADATA ENDPOINTS
 @api_router.get("/metadata", response_model=List[MetadataDefinition])
-async def list_metadata(current_user: User = Depends(get_current_user)):
+async def list_metadata(auth: AuthResult = Depends(get_current_user_or_api_token)):
+    # Check permission for API tokens
+    if auth.is_api_token and not auth.has_permission("metadata:read"):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="API token lacks metadata:read permission")
+    
     metadata = await db.metadata_definitions.find({}, {"_id": 0}).to_list(1000)
     for meta in metadata:
         if isinstance(meta.get('created_at'), str):
