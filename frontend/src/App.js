@@ -8,6 +8,7 @@ import UserManagement from './components/admin/UserManagement';
 import TeamManagement from './components/admin/TeamManagement';
 import MetadataManagement from './components/admin/MetadataManagement';
 import WorkspaceManagement from './components/admin/WorkspaceManagement';
+import ApiTokenManagement from './components/admin/ApiTokenManagement';
 import PublicDocumentViewer from './pages/PublicDocumentViewer';
 import MainLayout from './components/MainLayout';
 import '@/App.css';
@@ -106,6 +107,16 @@ function AppRoutes() {
           <ProtectedRoute adminOnly>
             <MainLayout>
               <WorkspaceManagement />
+            </MainLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/api-tokens"
+        element={
+          <ProtectedRoute adminOnly>
+            <MainLayout>
+              <ApiTokenManagement />
             </MainLayout>
           </ProtectedRoute>
         }
