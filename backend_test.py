@@ -217,6 +217,7 @@ class PDFDocumentSystemTester:
             f"workspaces/{workspace_id}/documents",
             200,
             data={
+                "workspace_id": workspace_id,
                 "file_name": file_name,
                 "file_path": file_path,
                 "metadata": {"category": "test", "author": "test user"}
