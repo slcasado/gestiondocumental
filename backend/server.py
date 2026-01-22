@@ -93,6 +93,89 @@ async def get_admin_user(current_user: User = Depends(get_current_user)) -> User
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin access required")
     return current_user
 
+# API Token Authentication
+API_TOKEN_PREFIX = "costa_"
+
+def generate_api_token() -> str:
+    """Generate a secure API token with prefix"""
+    return f"{API_TOKEN_PREFIX}{secrets.token_urlsafe(32)}"
+
+def hash_api_token(token: str) -> str:
+    """Hash API token for storage"""
+    return hashlib.sha256(token.encode()).hexdigest()
+
+async def get_api_token_from_header(authorization: str = Header(None)) -> Optional[dict]:
+    """Extract and validate API token from header"""
+    if not authorization:
+        return None
+    
+    # Check for Bearer token format
+    if authorization.startswith("Bearer "):
+        token = authorization[7:]
+        
+        # Check if it's an API token (starts with prefix)
+        if token.startswith(API_TOKEN_PREFIX):
+            token_hash = hash_api_token(token)
+            api_token = await db.api_tokens.find_one({"token_hash": token_hash}, {"_id": 0})
+            
+            if api_token:
+                # Update last_used
+                await db.api_tokens.update_one(
+                    {"token_hash": token_hash},
+                    {"$set": {"last_used": datetime.now(timezone.utc).isoformat()}}
+                )
+                return api_token
+    
+    return None
+
+def require_api_permission(permission: ApiTokenPermission):
+    """Dependency to check API token permissions"""
+    async def check_permission(
+        request: Request,
+        credentials: HTTPAuthorizationCredentials = Depends(security)
+    ):
+        token = credentials.credentials
+        
+        # Check if it's an API token
+        if token.startswith(API_TOKEN_PREFIX):
+            token_hash = hash_api_token(token)
+            api_token = await db.api_tokens.find_one({"token_hash": token_hash}, {"_id": 0})
+            
+            if not api_token:
+                raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid API token")
+            
+            # Check permission
+            if permission.value not in api_token.get("permissions", []):
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN, 
+                    detail=f"API token lacks required permission: {permission.value}"
+                )
+            
+            # Update last_used
+            await db.api_tokens.update_one(
+                {"token_hash": token_hash},
+                {"$set": {"last_used": datetime.now(timezone.utc).isoformat()}}
+            )
+            
+            return {"type": "api_token", "token_data": api_token}
+        
+        # Otherwise, validate as regular JWT token
+        payload = decode_access_token(token)
+        if payload is None:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+        
+        user_id = payload.get("sub")
+        if not user_id:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+        
+        user_doc = await db.users.find_one({"id": user_id}, {"_id": 0})
+        if not user_doc:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
+        
+        return {"type": "user", "user": User(**user_doc)}
+    
+    return check_permission
+
 # Initialize default admin user
 async def init_default_admin():
     existing_admin = await db.users.find_one({"email": "admin"})
