@@ -48,10 +48,31 @@ export default function WorkspaceView() {
         JSON.stringify(doc.metadata).toLowerCase().includes(searchQuery.toLowerCase())
       );
       setFilteredDocuments(filtered);
+      setCurrentPage(1); // Reset to first page when searching
     } else {
       setFilteredDocuments(documents);
     }
   }, [searchQuery, documents]);
+
+  useEffect(() => {
+    // Calculate pagination
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    const paginated = filteredDocuments.slice(startIndex, endIndex);
+    setPaginatedDocuments(paginated);
+    setTotalPages(Math.ceil(filteredDocuments.length / pageSize));
+  }, [filteredDocuments, currentPage, pageSize]);
+
+  const handlePageSizeChange = (newSize) => {
+    setPageSize(newSize);
+    setCurrentPage(1); // Reset to first page when changing page size
+  };
+
+  const goToPage = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
 
   const loadWorkspace = async () => {
     try {
