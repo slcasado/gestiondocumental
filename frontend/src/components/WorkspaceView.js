@@ -183,11 +183,14 @@ export default function WorkspaceView() {
   const visibleFields = getVisibleMetadataFields();
 
   return (
-    <div className="flex-1 md:pl-64 min-h-screen bg-slate-50/50" data-testid="workspace-view">
+    <div className="flex-1 md:pl-64 min-h-screen bg-gradient-to-br from-costa-blue-light/20 to-slate-50" data-testid="workspace-view">
       <div className="p-8">
         <div className="mb-6">
-          <h1 className="text-4xl font-bold tracking-tight mb-2">{workspace?.name || 'Espacio'}</h1>
-          <p className="text-slate-600">{workspace?.description || 'Gestión de documentos'}</p>
+          <div className="flex items-center gap-3 mb-2">
+            <div className="h-1 w-12 bg-gradient-to-r from-costa-yellow to-costa-yellow-bright rounded-full"></div>
+            <h1 className="text-4xl font-bold tracking-tight text-costa-blue">{workspace?.name || 'Espacio'}</h1>
+          </div>
+          <p className="text-slate-600 ml-16">{workspace?.description || 'Gestión de documentos'}</p>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4 mb-6">
