@@ -81,9 +81,7 @@ export default function MetadataManagement() {
 
   return (
     <div className="flex-1 md:pl-64 min-h-screen bg-slate-50/50" data-testid="metadata-management">
-      
-      <div className="flex-1 md:pl-64 min-h-screen bg-slate-50/50" data-testid="metadata-management">
-        <div className="p-8">
+      <div className="p-8">
           <div className="flex justify-between items-center mb-6">
             <div>
               <h1 className="text-4xl font-bold tracking-tight mb-2">Metadatos</h1>
