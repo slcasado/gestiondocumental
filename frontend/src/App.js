@@ -49,7 +49,9 @@ function AppRoutes() {
         path="/dashboard"
         element={
           <ProtectedRoute>
-            <Dashboard />
+            <MainLayout>
+              <Dashboard />
+            </MainLayout>
           </ProtectedRoute>
         }
       />
@@ -67,7 +69,9 @@ function AppRoutes() {
         path="/admin/users"
         element={
           <ProtectedRoute adminOnly>
-            <UserManagement />
+            <MainLayout>
+              <UserManagement />
+            </MainLayout>
           </ProtectedRoute>
         }
       />
@@ -75,7 +79,9 @@ function AppRoutes() {
         path="/admin/teams"
         element={
           <ProtectedRoute adminOnly>
-            <TeamManagement />
+            <MainLayout>
+              <TeamManagement />
+            </MainLayout>
           </ProtectedRoute>
         }
       />
@@ -83,7 +89,9 @@ function AppRoutes() {
         path="/admin/metadata"
         element={
           <ProtectedRoute adminOnly>
-            <MetadataManagement />
+            <MainLayout>
+              <MetadataManagement />
+            </MainLayout>
           </ProtectedRoute>
         }
       />
@@ -91,7 +99,9 @@ function AppRoutes() {
         path="/admin/workspaces"
         element={
           <ProtectedRoute adminOnly>
-            <WorkspaceManagement />
+            <MainLayout>
+              <WorkspaceManagement />
+            </MainLayout>
           </ProtectedRoute>
         }
       />
