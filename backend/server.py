@@ -71,6 +71,14 @@ async def add_security_headers(request: Request, call_next):
 # Auth dependency
 async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> User:
     token = credentials.credentials
+    
+    # Check if it's an API token first
+    if token.startswith(API_TOKEN_PREFIX):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, 
+            detail="API tokens cannot access this endpoint. Use user credentials."
+        )
+    
     payload = decode_access_token(token)
     if payload is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
@@ -87,6 +95,60 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
         user_doc['created_at'] = datetime.fromisoformat(user_doc['created_at'])
     
     return User(**user_doc)
+
+class AuthResult:
+    """Result of authentication - either a User or an API Token"""
+    def __init__(self, user: Optional[User] = None, api_token: Optional[dict] = None):
+        self.user = user
+        self.api_token = api_token
+        self.is_api_token = api_token is not None
+    
+    def has_permission(self, permission: str) -> bool:
+        if self.user:
+            return True  # Users have all permissions
+        if self.api_token:
+            return permission in self.api_token.get("permissions", [])
+        return False
+
+async def get_current_user_or_api_token(
+    credentials: HTTPAuthorizationCredentials = Depends(security)
+) -> AuthResult:
+    """Authenticate via JWT token or API token"""
+    token = credentials.credentials
+    
+    # Check if it's an API token
+    if token.startswith(API_TOKEN_PREFIX):
+        token_hash = hash_api_token(token)
+        api_token = await db.api_tokens.find_one({"token_hash": token_hash}, {"_id": 0, "token_hash": 0})
+        
+        if not api_token:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid API token")
+        
+        # Update last_used
+        await db.api_tokens.update_one(
+            {"id": api_token["id"]},
+            {"$set": {"last_used": datetime.now(timezone.utc).isoformat()}}
+        )
+        
+        return AuthResult(api_token=api_token)
+    
+    # Otherwise, validate as JWT token
+    payload = decode_access_token(token)
+    if payload is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+    
+    user_id = payload.get("sub")
+    if not user_id:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+    
+    user_doc = await db.users.find_one({"id": user_id}, {"_id": 0})
+    if not user_doc:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
+    
+    if isinstance(user_doc.get('created_at'), str):
+        user_doc['created_at'] = datetime.fromisoformat(user_doc['created_at'])
+    
+    return AuthResult(user=User(**user_doc))
 
 async def get_admin_user(current_user: User = Depends(get_current_user)) -> User:
     if current_user.role != UserRole.ADMIN:
