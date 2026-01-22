@@ -4,7 +4,7 @@ import json
 from datetime import datetime
 
 class PDFDocumentSystemTester:
-    def __init__(self, base_url="https://docusphere-7.preview.emergentagent.com/api"):
+    def __init__(self, base_url="https://docvault-106.preview.emergentagent.com/api"):
         self.base_url = base_url
         self.token = None
         self.admin_user_id = None

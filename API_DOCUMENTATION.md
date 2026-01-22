@@ -2,7 +2,7 @@
 
 ## URL Base
 ```
-https://docusphere-7.preview.emergentagent.com/api
+https://docvault-106.preview.emergentagent.com/api
 ```
 
 ## Autenticación
@@ -344,12 +344,12 @@ Permite acceso público al documento usando la URL pública generada automática
 ### Ejemplo 1: Crear un documento completo
 ```bash
 # 1. Login
-TOKEN=$(curl -s -X POST "https://docusphere-7.preview.emergentagent.com/api/auth/login" \
+TOKEN=$(curl -s -X POST "https://docvault-106.preview.emergentagent.com/api/auth/login" \
   -H "Content-Type: application/json" \
   -d '{"email":"admin","password":"admin"}' | jq -r '.access_token')
 
 # 2. Crear espacio de trabajo
-WORKSPACE_ID=$(curl -s -X POST "https://docusphere-7.preview.emergentagent.com/api/workspaces" \
+WORKSPACE_ID=$(curl -s -X POST "https://docvault-106.preview.emergentagent.com/api/workspaces" \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
@@ -360,7 +360,7 @@ WORKSPACE_ID=$(curl -s -X POST "https://docusphere-7.preview.emergentagent.com/a
   }' | jq -r '.id')
 
 # 3. Insertar documento
-curl -X POST "https://docusphere-7.preview.emergentagent.com/api/workspaces/$WORKSPACE_ID/documents" \
+curl -X POST "https://docvault-106.preview.emergentagent.com/api/workspaces/$WORKSPACE_ID/documents" \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
@@ -377,17 +377,17 @@ curl -X POST "https://docusphere-7.preview.emergentagent.com/api/workspaces/$WOR
 ### Ejemplo 2: Buscar y descargar documentos
 ```bash
 # 1. Login y obtener token
-TOKEN=$(curl -s -X POST "https://docusphere-7.preview.emergentagent.com/api/auth/login" \
+TOKEN=$(curl -s -X POST "https://docvault-106.preview.emergentagent.com/api/auth/login" \
   -H "Content-Type: application/json" \
   -d '{"email":"admin","password":"admin"}' | jq -r '.access_token')
 
 # 2. Buscar documentos
-curl -s -X GET "https://docusphere-7.preview.emergentagent.com/api/documents/search?q=contrato" \
+curl -s -X GET "https://docvault-106.preview.emergentagent.com/api/documents/search?q=contrato" \
   -H "Authorization: Bearer $TOKEN" | jq '.'
 
 # 3. Descargar documento específico
 DOCUMENT_ID="doc_uuid_aquí"
-curl -X GET "https://docusphere-7.preview.emergentagent.com/api/documents/$DOCUMENT_ID/view" \
+curl -X GET "https://docvault-106.preview.emergentagent.com/api/documents/$DOCUMENT_ID/view" \
   -H "Authorization: Bearer $TOKEN" \
   -o documento_descargado.pdf
 ```
@@ -396,7 +396,7 @@ curl -X GET "https://docusphere-7.preview.emergentagent.com/api/documents/$DOCUM
 ```python
 import requests
 
-API_URL = "https://docusphere-7.preview.emergentagent.com/api"
+API_URL = "https://docvault-106.preview.emergentagent.com/api"
 
 # Login
 response = requests.post(f"{API_URL}/auth/login", json={
