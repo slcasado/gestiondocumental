@@ -20,24 +20,24 @@ export default function Sidebar({ workspaces }) {
         <p className="text-sm text-costa-blue-light mt-1">{user?.email}</p>
       </div>
 
-      <ScrollArea className="flex-1 px-3 py-4">
+      <ScrollArea className="flex-1 py-4">
         <div className="space-y-6">
           {/* Workspaces Section */}
-          <div>
-            <h3 className="px-3 mb-2 text-xs font-medium uppercase tracking-wider text-slate-500">Espacios</h3>
+          <div className="px-3">
+            <h3 className="mb-2 text-xs font-medium uppercase tracking-wider text-slate-500">Espacios</h3>
             <div className="space-y-1">
               {workspaces?.map((workspace) => (
                 <Link key={workspace.id} to={`/workspace/${workspace.id}`}>
                   <Button
                     variant="ghost"
                     className={cn(
-                      "w-full justify-start",
+                      "w-full justify-start text-left",
                       isActive(`/workspace/${workspace.id}`) && "bg-costa-yellow/20 text-costa-blue font-medium"
                     )}
                     data-testid={`workspace-link-${workspace.id}`}
                   >
-                    <FolderOpen className="mr-2 h-4 w-4" />
-                    {workspace.name}
+                    <FolderOpen className="mr-2 h-4 w-4 flex-shrink-0" />
+                    <span className="truncate">{workspace.name}</span>
                   </Button>
                 </Link>
               ))}
@@ -48,8 +48,8 @@ export default function Sidebar({ workspaces }) {
           {isAdmin && (
             <>
               <Separator />
-              <div>
-                <h3 className="px-3 mb-2 text-xs font-medium uppercase tracking-wider text-slate-500">Administración</h3>
+              <div className="px-3">
+                <h3 className="mb-2 text-xs font-medium uppercase tracking-wider text-slate-500">Administración</h3>
                 <div className="space-y-1">
                   <Link to="/admin/users">
                     <Button
@@ -60,7 +60,7 @@ export default function Sidebar({ workspaces }) {
                       )}
                       data-testid="admin-users-link"
                     >
-                      <Users className="mr-2 h-4 w-4" />
+                      <Users className="mr-2 h-4 w-4 flex-shrink-0" />
                       Usuarios
                     </Button>
                   </Link>
@@ -73,7 +73,7 @@ export default function Sidebar({ workspaces }) {
                       )}
                       data-testid="admin-teams-link"
                     >
-                      <Users className="mr-2 h-4 w-4" />
+                      <Users className="mr-2 h-4 w-4 flex-shrink-0" />
                       Equipos
                     </Button>
                   </Link>
@@ -86,7 +86,7 @@ export default function Sidebar({ workspaces }) {
                       )}
                       data-testid="admin-metadata-link"
                     >
-                      <Tag className="mr-2 h-4 w-4" />
+                      <Tag className="mr-2 h-4 w-4 flex-shrink-0" />
                       Metadatos
                     </Button>
                   </Link>
@@ -99,7 +99,7 @@ export default function Sidebar({ workspaces }) {
                       )}
                       data-testid="admin-workspaces-link"
                     >
-                      <Settings className="mr-2 h-4 w-4" />
+                      <Settings className="mr-2 h-4 w-4 flex-shrink-0" />
                       Espacios
                     </Button>
                   </Link>
@@ -112,7 +112,7 @@ export default function Sidebar({ workspaces }) {
                       )}
                       data-testid="admin-api-tokens-link"
                     >
-                      <Key className="mr-2 h-4 w-4" />
+                      <Key className="mr-2 h-4 w-4 flex-shrink-0" />
                       API Tokens
                     </Button>
                   </Link>
