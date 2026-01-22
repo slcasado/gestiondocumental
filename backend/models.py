@@ -107,7 +107,6 @@ class Document(BaseModel):
     updated_at: datetime
 
 class DocumentCreate(BaseModel):
-    workspace_id: str
     file_path: str
     file_name: str
     metadata: Dict[str, Any] = {}
