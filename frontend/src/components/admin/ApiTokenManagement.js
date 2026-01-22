@@ -136,48 +136,51 @@ export default function ApiTokenManagement() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-costa-blue"></div>
+      <div className="flex-1 md:pl-64 min-h-screen bg-slate-50/50">
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-costa-blue"></div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6" data-testid="api-token-management">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900">API Tokens</h1>
-          <p className="text-slate-600 mt-1">Gestiona tokens de acceso para integraciones externas</p>
+    <div className="flex-1 md:pl-64 min-h-screen bg-slate-50/50" data-testid="api-token-management">
+      <div className="p-8 space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-4xl font-bold tracking-tight mb-2">API Tokens</h1>
+            <p className="text-slate-600">Gestiona tokens de acceso para integraciones externas</p>
+          </div>
+          <Button 
+            onClick={() => setShowCreateModal(true)}
+            className="bg-costa-blue hover:bg-costa-blue/90"
+            data-testid="create-token-btn"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Nuevo Token
+          </Button>
         </div>
-        <Button 
-          onClick={() => setShowCreateModal(true)}
-          className="bg-costa-blue hover:bg-costa-blue/90"
-          data-testid="create-token-btn"
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          Nuevo Token
-        </Button>
-      </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Key className="h-5 w-5" />
-            Tokens Registrados
-          </CardTitle>
-          <CardDescription>
-            Los tokens permiten acceso programático a la API con permisos específicos
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {tokens.length === 0 ? (
-            <div className="text-center py-12 text-slate-500">
-              <Key className="h-12 w-12 mx-auto mb-4 text-slate-300" />
-              <p>No hay tokens registrados</p>
-              <p className="text-sm mt-1">Crea un token para comenzar a usar la API</p>
-            </div>
-          ) : (
-            <Table>
+        <Card className="shadow-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Key className="h-5 w-5" />
+              Tokens Registrados
+            </CardTitle>
+            <CardDescription>
+              Los tokens permiten acceso programático a la API con permisos específicos
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {tokens.length === 0 ? (
+              <div className="text-center py-12 text-slate-500">
+                <Key className="h-12 w-12 mx-auto mb-4 text-slate-300" />
+                <p>No hay tokens registrados</p>
+                <p className="text-sm mt-1">Crea un token para comenzar a usar la API</p>
+              </div>
+            ) : (
+              <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Nombre</TableHead>
