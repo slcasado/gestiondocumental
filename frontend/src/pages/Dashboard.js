@@ -7,7 +7,6 @@ import api from '../utils/api';
 export default function Dashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [workspaces, setWorkspaces] = useState([]);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
 
   useEffect(() => {
@@ -23,7 +22,6 @@ export default function Dashboard() {
   const loadWorkspaces = async () => {
     try {
       const response = await api.getWorkspaces();
-      setWorkspaces(response.data);
       
       // Auto-navigate to first workspace
       if (response.data.length > 0) {
@@ -36,7 +34,6 @@ export default function Dashboard() {
 
   return (
     <>
-      <Sidebar workspaces={workspaces} />
       <div className="flex-1 md:pl-64 min-h-screen bg-slate-50/50" data-testid="dashboard">
         <div className="p-8">
           <h1 className="text-4xl font-bold tracking-tight mb-2">Bienvenido</h1>
