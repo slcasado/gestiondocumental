@@ -200,10 +200,23 @@ export default function WorkspaceView() {
                         </TableCell>
                       ))}
                       <TableCell className="text-sm text-slate-600">
-                        {new Date(doc.created_at).toLocaleDateString()}
+                        {formatDateSpanish(doc.created_at)}
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => {
+                              const publicUrl = `${window.location.origin}/public/${doc.public_url}`;
+                              navigator.clipboard.writeText(publicUrl);
+                              toast.success('URL pública copiada al portapapeles');
+                            }}
+                            title="Copiar URL pública"
+                            data-testid={`copy-public-url-${doc.id}`}
+                          >
+                            <Link2 className="h-4 w-4" />
+                          </Button>
                           <Button
                             size="sm"
                             variant="ghost"
