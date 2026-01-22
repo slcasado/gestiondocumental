@@ -321,7 +321,9 @@ def main():
     tester.test_list_metadata()
 
     # Test 7: Workspace Management
-    tester.test_create_workspace("Test Workspace", "A test workspace")
+    timestamp = datetime.now().strftime("%H%M%S")
+    workspace_name = f"Test Workspace {timestamp}"
+    tester.test_create_workspace(workspace_name, "A test workspace")
     tester.test_list_workspaces()
 
     # Test 8: Document Management
