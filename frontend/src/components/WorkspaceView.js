@@ -190,7 +190,7 @@ export default function WorkspaceView() {
           <p className="text-slate-600">{workspace?.description || 'Gestión de documentos'}</p>
         </div>
 
-        <div className="flex gap-4 mb-6">
+        <div className="flex flex-col sm:flex-row gap-4 mb-6">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
             <Input
@@ -200,6 +200,20 @@ export default function WorkspaceView() {
               className="pl-10"
               data-testid="search-documents-input"
             />
+          </div>
+          <div className="flex items-center gap-2">
+            <Label className="text-sm text-slate-600 whitespace-nowrap">Mostrar:</Label>
+            <Select value={pageSize.toString()} onValueChange={(value) => handlePageSizeChange(parseInt(value))}>
+              <SelectTrigger className="w-28" data-testid="page-size-select">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="50">50</SelectItem>
+                <SelectItem value="100">100</SelectItem>
+                <SelectItem value="500">500</SelectItem>
+                <SelectItem value="1000">1000</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           <Button
             onClick={() => setAddDocModalOpen(true)}
