@@ -525,7 +525,14 @@ async def delete_document(doc_id: str, current_user: User = Depends(get_current_
     return {"message": "Document deleted successfully"}
 
 @api_router.get("/documents/search", response_model=List[Document])
-async def search_documents(q: str, current_user: User = Depends(get_current_user)):
+@limiter.limit(RATE_LIMIT_API)
+async def search_documents(request: Request, q: str, current_user: User = Depends(get_current_user)):
+    # Sanitize search query to prevent NoSQL injection
+    search_query = sanitize_string(q, 200)
+    
+    if not search_query or len(search_query) < 2:
+        return []
+    
     # Get accessible workspaces
     if current_user.role == UserRole.ADMIN:
         workspaces = await db.workspaces.find({}, {"_id": 0, "id": 1}).to_list(1000)
@@ -537,18 +544,18 @@ async def search_documents(q: str, current_user: User = Depends(get_current_user
     
     workspace_ids = [ws["id"] for ws in workspaces]
     
-    # Search in file_name and metadata
+    # Use safe regex pattern - escape special regex characters
+    import re
+    safe_query = re.escape(search_query)
+    
+    # Search in file_name only (safer than searching in all fields)
     documents = await db.documents.find(
         {
             "workspace_id": {"$in": workspace_ids},
-            "$or": [
-                {"file_name": {"$regex": q, "$options": "i"}},
-                {"file_path": {"$regex": q, "$options": "i"}},
-                {"metadata": {"$regex": q, "$options": "i"}}
-            ]
+            "file_name": {"$regex": safe_query, "$options": "i"}
         },
         {"_id": 0}
-    ).sort("created_at", -1).to_list(100)
+    ).sort("created_at", -1).limit(100).to_list(100)
     
     for doc in documents:
         if isinstance(doc.get('created_at'), str):
