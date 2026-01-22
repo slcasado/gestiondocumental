@@ -187,6 +187,6 @@ export default function MetadataManagement() {
           </div>
         </DialogContent>
       </Dialog>
-      </div>
+    </div>
   );
 }
