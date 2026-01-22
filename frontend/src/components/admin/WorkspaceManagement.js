@@ -10,7 +10,7 @@ import { Checkbox } from '../ui/checkbox';
 import { Plus, Edit, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '../../utils/api';
-import Sidebar from '../Sidebar';
+
 
 export default function WorkspaceManagement() {
   const [workspaces, setWorkspaces] = useState([]);
@@ -103,8 +103,8 @@ export default function WorkspaceManagement() {
   };
 
   return (
-    <>
-      <Sidebar workspaces={workspaces} />
+<div className="flex-1 md:pl-64 min-h-screen bg-slate-50/50" data-testid="workspace-management">
+      
       <div className="flex-1 md:pl-64 min-h-screen bg-slate-50/50" data-testid="workspace-management">
         <div className="p-8">
           <div className="flex justify-between items-center mb-6">
@@ -226,6 +226,6 @@ export default function WorkspaceManagement() {
           </div>
         </DialogContent>
       </Dialog>
-    </>
+</div>
   );
 }
