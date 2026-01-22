@@ -302,7 +302,10 @@ def main():
             print("✅ Password changed successfully")
 
     # Test 4: User Management
-    tester.test_create_user("testuser@example.com", "testpass123", "user")
+    # Use a unique email to avoid conflicts
+    timestamp = datetime.now().strftime("%H%M%S")
+    test_email = f"testuser{timestamp}@example.com"
+    tester.test_create_user(test_email, "testpass123", "user")
     tester.test_list_users()
 
     # Test 5: Team Management
