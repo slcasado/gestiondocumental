@@ -120,3 +120,34 @@ class TokenResponse(BaseModel):
     access_token: str
     token_type: str
     user: User
+
+# API Token models
+class ApiTokenPermission(str, Enum):
+    DOCUMENTS_READ = "documents:read"
+    DOCUMENTS_CREATE = "documents:create"
+    DOCUMENTS_UPDATE = "documents:update"
+    DOCUMENTS_DELETE = "documents:delete"
+    DOCUMENTS_SEARCH = "documents:search"
+    WORKSPACES_READ = "workspaces:read"
+    METADATA_READ = "metadata:read"
+
+class ApiToken(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str
+    name: str
+    description: Optional[str] = None
+    token: str
+    permissions: List[ApiTokenPermission]
+    created_by: str
+    created_at: datetime
+    last_used: Optional[datetime] = None
+
+class ApiTokenCreate(BaseModel):
+    name: str
+    description: Optional[str] = None
+    permissions: List[ApiTokenPermission]
+
+class ApiTokenUpdate(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    permissions: Optional[List[ApiTokenPermission]] = None
