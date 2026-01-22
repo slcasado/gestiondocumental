@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import Sidebar from '../components/Sidebar';
 import ChangePasswordModal from '../components/ChangePasswordModal';
 import api from '../utils/api';
 
