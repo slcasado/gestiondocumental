@@ -26,11 +26,9 @@ export default function MetadataManagement() {
   const loadData = async () => {
     try {
       const [metaRes] = await Promise.all([
-        api.getMetadata(),
-        
+        api.getMetadata()
       ]);
       setMetadata(metaRes.data);
-      
     } catch (error) {
       toast.error('Error al cargar datos');
     }
