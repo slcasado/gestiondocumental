@@ -1,0 +1,150 @@
+{
+  "design_system": {
+    "identity": {
+      "name": "E1_DMS_System",
+      "tone": "Swiss Utility, Precision, Calm, Professional",
+      "principles": [
+        "Content is King: The document is the hero.",
+        "Fusion: Swiss Typography meets Digital Utility.",
+        "Negative Space: Use whitespace to indicate hierarchy, not lines.",
+        "Micro-Interactions: Every click has a subtle reaction."
+      ]
+    },
+    "typography": {
+      "font_family": {
+        "headings": "Plus Jakarta Sans, sans-serif",
+        "body": "Inter, sans-serif",
+        "mono": "JetBrains Mono, monospace"
+      },
+      "scale": {
+        "h1": "text-4xl md:text-5xl font-bold tracking-tight",
+        "h2": "text-3xl font-semibold tracking-tight",
+        "h3": "text-2xl font-medium tracking-tight",
+        "body": "text-base leading-relaxed text-slate-600",
+        "small": "text-sm font-medium text-slate-500 uppercase tracking-wider"
+      },
+      "rules": [
+        "Never use Inter for Headings.",
+        "Headings must have tight tracking (-0.02em).",
+        "Labels must be uppercase and small with wide tracking."
+      ]
+    },
+    "colors": {
+      "palette": {
+        "primary": {
+          "DEFAULT": "#312E81",
+          "foreground": "#FFFFFF",
+          "hover": "#3730A3"
+        },
+        "secondary": {
+          "DEFAULT": "#F1F5F9",
+          "foreground": "#0F172A"
+        },
+        "accent": {
+          "DEFAULT": "#4F46E5",
+          "foreground": "#FFFFFF"
+        },
+        "background": "#F8FAFC",
+        "surface": "#FFFFFF",
+        "border": "#E2E8F0",
+        "muted": "#64748B",
+        "destructive": "#EF4444"
+      },
+      "usage": {
+        "primary_action": "bg-primary text-primary-foreground hover:bg-primary/90",
+        "secondary_action": "bg-white border border-slate-200 text-slate-900 hover:bg-slate-50",
+        "surface_card": "bg-white border border-slate-100 shadow-sm"
+      }
+    },
+    "spacing": {
+      "container_padding": "p-6 md:p-12",
+      "section_gap": "gap-8",
+      "item_gap": "gap-4",
+      "radius": "rounded-md"
+    },
+    "layout": {
+      "grid_system": "grid grid-cols-1 md:grid-cols-12 gap-6",
+      "dashboard_structure": {
+        "sidebar": "w-64 hidden md:flex flex-col border-r bg-white h-screen fixed left-0 top-0 z-30",
+        "main_content": "flex-1 md:pl-64 min-h-screen bg-slate-50/50"
+      },
+      "bento_grid": {
+        "wrapper": "grid grid-cols-1 md:grid-cols-3 gap-4",
+        "hero_card": "col-span-1 md:col-span-2 row-span-2",
+        "stat_card": "col-span-1"
+      }
+    },
+    "components": {
+      "buttons": {
+        "base": "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+        "variants": {
+          "default": "bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm",
+          "outline": "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+          "ghost": "hover:bg-accent hover:text-accent-foreground"
+        }
+      },
+      "cards": {
+        "style": "rounded-lg border bg-card text-card-foreground shadow-sm transition-all duration-200 hover:shadow-md"
+      },
+      "inputs": {
+        "style": "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+      }
+    },
+    "visual_enhancers": {
+      "shadows": {
+        "ambient": "shadow-[0_2px_8px_rgba(0,0,0,0.04)]",
+        "hover": "shadow-[0_8px_24px_rgba(0,0,0,0.08)]"
+      },
+      "glassmorphism": {
+        "header": "bg-white/80 backdrop-blur-md border-b border-slate-200/50"
+      },
+      "micro_interactions": {
+        "hover_lift": "hover:-translate-y-0.5 transition-transform duration-200",
+        "active_press": "active:scale-95 transition-transform duration-100"
+      }
+    },
+    "assets": {
+      "images": {
+        "login_background": {
+          "url": "https://images.unsplash.com/photo-1576005887936-6e73c73c3702?crop=entropy&cs=srgb&fm=jpg&q=85",
+          "alt": "Minimalist White Architecture",
+          "usage": "Right side of split-screen login page. Object-cover."
+        },
+        "empty_state": {
+          "url": "https://images.unsplash.com/photo-1612538498488-226257115cc4?crop=entropy&cs=srgb&fm=jpg&q=85",
+          "alt": "Clean White Texture",
+          "usage": "Background for empty states or 404 pages."
+        }
+      },
+      "icons": {
+        "library": "lucide-react",
+        "style": "stroke-width={1.5} size={20}"
+      }
+    },
+    "accessibility": {
+      "rules": [
+        "Ensure 4.5:1 contrast ratio for text.",
+        "All interactive elements must have :focus-visible states.",
+        "Use semantic HTML (main, nav, aside, section).",
+        "All images must have alt text."
+      ]
+    },
+    "universal_guidelines": [
+      "Do not use gradients for backgrounds, use solid colors or subtle noise.",
+      "Use 2x more padding than you think is necessary.",
+      "Avoid 'Inter' for headings. Use 'Plus Jakarta Sans'.",
+      "All interactive elements must have a data-testid attribute.",
+      "Use 'sonner' for toast notifications.",
+      "Use 'lucide-react' for icons."
+    ]
+  },
+  "instructions_to_main_agent": {
+    "step_1": "Install dependencies: `npm install lucide-react sonner clsx tailwind-merge @radix-ui/react-slot @radix-ui/react-dialog @radix-ui/react-dropdown-menu @radix-ui/react-label @radix-ui/react-select @radix-ui/react-separator @radix-ui/react-tabs @radix-ui/react-avatar @radix-ui/react-tooltip`",
+    "step_2": "Configure Tailwind theme in `tailwind.config.js` to match the color palette.",
+    "step_3": "Create the layout components (Sidebar, Header, MainLayout).",
+    "step_4": "Implement the Login page with the split-screen design.",
+    "step_5": "Build the Dashboard with the Bento Grid layout.",
+    "step_6": "Implement the Document List with the custom Table component.",
+    "step_7": "Ensure all interactive elements have `data-testid`."
+  }
+}
