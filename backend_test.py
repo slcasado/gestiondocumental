@@ -309,7 +309,9 @@ def main():
     tester.test_list_users()
 
     # Test 5: Team Management
-    tester.test_create_team("Test Team", "A test team for testing")
+    timestamp = datetime.now().strftime("%H%M%S")
+    team_name = f"Test Team {timestamp}"
+    tester.test_create_team(team_name, "A test team for testing")
     tester.test_list_teams()
 
     # Test 6: Metadata Management
