@@ -228,10 +228,10 @@ export default function WorkspaceView() {
           </Button>
         </div>
 
-        <Card className="shadow-sm">
-          <CardHeader>
-            <CardTitle>Documentos</CardTitle>
-            <CardDescription>
+        <Card className="shadow-lg border-costa-blue-light">
+          <CardHeader className="bg-gradient-to-r from-costa-blue to-costa-blue/90">
+            <CardTitle className="text-white">Documentos</CardTitle>
+            <CardDescription className="text-costa-blue-light">
               Mostrando {paginatedDocuments.length > 0 ? ((currentPage - 1) * pageSize) + 1 : 0} - {Math.min(currentPage * pageSize, filteredDocuments.length)} de {filteredDocuments.length} documento(s)
             </CardDescription>
           </CardHeader>
