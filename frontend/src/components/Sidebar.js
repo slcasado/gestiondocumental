@@ -14,10 +14,10 @@ export default function Sidebar({ workspaces }) {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <div className="w-64 border-r bg-white h-screen fixed left-0 top-0 z-30 flex flex-col" data-testid="sidebar">
-      <div className="p-6 border-b">
-        <h1 className="text-xl font-bold tracking-tight text-primary">Costa_Doc</h1>
-        <p className="text-sm text-muted-foreground mt-1">{user?.email}</p>
+    <div className="w-64 border-r border-costa-blue-light bg-white h-screen fixed left-0 top-0 z-30 flex flex-col" data-testid="sidebar">
+      <div className="p-6 border-b border-costa-blue-light bg-gradient-to-r from-costa-blue to-costa-blue/90">
+        <h1 className="text-xl font-bold tracking-tight text-white">Costa_Doc</h1>
+        <p className="text-sm text-costa-blue-light mt-1">{user?.email}</p>
       </div>
 
       <ScrollArea className="flex-1 px-3 py-4">
