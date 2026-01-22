@@ -20,13 +20,9 @@ export default function PublicDocumentViewer() {
   const loadDocument = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${API_URL}/public/documents/${publicUrl}`);
-      
-      // Create a blob URL for the PDF
-      const blob = new Blob([response.data], { type: 'application/pdf' });
-      const url = URL.createObjectURL(blob);
+      // Get the PDF URL directly from the backend
+      const url = `${API_URL}/public/documents/${publicUrl}`;
       setPdfUrl(url);
-      
       setLoading(false);
     } catch (error) {
       console.error('Error loading document:', error);
