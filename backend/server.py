@@ -711,6 +711,163 @@ async def view_public_document(public_url: str):
     
     return FileResponse(file_path, media_type="application/pdf", filename=doc["file_name"])
 
+# API TOKEN ENDPOINTS (Admin only)
+@api_router.get("/admin/api-tokens", response_model=List[ApiTokenResponse])
+async def list_api_tokens(current_user: User = Depends(get_admin_user)):
+    """List all API tokens (without showing the actual token)"""
+    tokens = await db.api_tokens.find({}, {"_id": 0, "token_hash": 0}).to_list(1000)
+    
+    result = []
+    for token in tokens:
+        if isinstance(token.get('created_at'), str):
+            token['created_at'] = datetime.fromisoformat(token['created_at'])
+        if isinstance(token.get('last_used'), str):
+            token['last_used'] = datetime.fromisoformat(token['last_used'])
+        
+        # Create preview from stored preview
+        result.append(ApiTokenResponse(
+            id=token['id'],
+            name=token['name'],
+            description=token.get('description'),
+            permissions=token.get('permissions', []),
+            created_by=token['created_by'],
+            created_at=token['created_at'],
+            last_used=token.get('last_used'),
+            token_preview=token.get('token_preview', '****')
+        ))
+    
+    return result
+
+@api_router.post("/admin/api-tokens", response_model=ApiTokenCreateResponse)
+@limiter.limit(RATE_LIMIT_API)
+async def create_api_token(request: Request, token_data: ApiTokenCreate, current_user: User = Depends(get_admin_user)):
+    """Create a new API token. The full token is shown ONLY once in the response."""
+    client_ip = get_remote_address(request)
+    
+    # Validate name
+    name = sanitize_string(token_data.name, 100)
+    if not name or len(name) < 3:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Token name must be at least 3 characters")
+    
+    # Check for duplicate name
+    existing = await db.api_tokens.find_one({"name": name})
+    if existing:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="A token with this name already exists")
+    
+    # Generate the token
+    raw_token = generate_api_token()
+    token_hash = hash_api_token(raw_token)
+    token_preview = f"****{raw_token[-8:]}"
+    
+    now = datetime.now(timezone.utc)
+    
+    new_token = {
+        "id": str(uuid.uuid4()),
+        "name": name,
+        "description": sanitize_string(token_data.description, 500) if token_data.description else None,
+        "token_hash": token_hash,
+        "token_preview": token_preview,
+        "permissions": [p.value for p in token_data.permissions],
+        "created_by": current_user.id,
+        "created_at": now.isoformat(),
+        "last_used": None
+    }
+    
+    await db.api_tokens.insert_one(new_token)
+    log_admin_action(current_user.id, "CREATE_API_TOKEN", name, client_ip)
+    
+    return ApiTokenCreateResponse(
+        id=new_token["id"],
+        name=new_token["name"],
+        description=new_token["description"],
+        permissions=token_data.permissions,
+        token=raw_token,  # Only time the full token is revealed
+        created_at=now
+    )
+
+@api_router.put("/admin/api-tokens/{token_id}", response_model=ApiTokenResponse)
+async def update_api_token(token_id: str, token_data: ApiTokenUpdate, current_user: User = Depends(get_admin_user)):
+    """Update an API token's name, description, or permissions"""
+    existing = await db.api_tokens.find_one({"id": token_id})
+    if not existing:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="API token not found")
+    
+    update_dict = {}
+    
+    if token_data.name is not None:
+        name = sanitize_string(token_data.name, 100)
+        if len(name) < 3:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Token name must be at least 3 characters")
+        
+        # Check for duplicate name (excluding current token)
+        duplicate = await db.api_tokens.find_one({"name": name, "id": {"$ne": token_id}})
+        if duplicate:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="A token with this name already exists")
+        
+        update_dict["name"] = name
+    
+    if token_data.description is not None:
+        update_dict["description"] = sanitize_string(token_data.description, 500)
+    
+    if token_data.permissions is not None:
+        update_dict["permissions"] = [p.value for p in token_data.permissions]
+    
+    if not update_dict:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No fields to update")
+    
+    await db.api_tokens.update_one({"id": token_id}, {"$set": update_dict})
+    
+    updated = await db.api_tokens.find_one({"id": token_id}, {"_id": 0, "token_hash": 0})
+    if isinstance(updated.get('created_at'), str):
+        updated['created_at'] = datetime.fromisoformat(updated['created_at'])
+    if isinstance(updated.get('last_used'), str):
+        updated['last_used'] = datetime.fromisoformat(updated['last_used'])
+    
+    return ApiTokenResponse(
+        id=updated['id'],
+        name=updated['name'],
+        description=updated.get('description'),
+        permissions=updated.get('permissions', []),
+        created_by=updated['created_by'],
+        created_at=updated['created_at'],
+        last_used=updated.get('last_used'),
+        token_preview=updated.get('token_preview', '****')
+    )
+
+@api_router.delete("/admin/api-tokens/{token_id}")
+async def delete_api_token(token_id: str, current_user: User = Depends(get_admin_user)):
+    """Revoke/Delete an API token"""
+    result = await db.api_tokens.delete_one({"id": token_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="API token not found")
+    
+    log_admin_action(current_user.id, "DELETE_API_TOKEN", token_id, get_remote_address)
+    
+    return {"message": "API token revoked successfully"}
+
+@api_router.get("/admin/api-tokens/permissions")
+async def list_available_permissions(current_user: User = Depends(get_admin_user)):
+    """List all available API token permissions"""
+    return {
+        "permissions": [
+            {"value": p.value, "label": get_permission_label(p)} 
+            for p in ApiTokenPermission
+        ]
+    }
+
+def get_permission_label(permission: ApiTokenPermission) -> str:
+    """Get human-readable label for permission"""
+    labels = {
+        ApiTokenPermission.DOCUMENTS_READ: "Leer Documentos",
+        ApiTokenPermission.DOCUMENTS_CREATE: "Crear Documentos",
+        ApiTokenPermission.DOCUMENTS_UPDATE: "Actualizar Documentos",
+        ApiTokenPermission.DOCUMENTS_DELETE: "Eliminar Documentos",
+        ApiTokenPermission.DOCUMENTS_SEARCH: "Buscar Documentos",
+        ApiTokenPermission.WORKSPACES_READ: "Leer Espacios de Trabajo",
+        ApiTokenPermission.METADATA_READ: "Leer Metadatos"
+    }
+    return labels.get(permission, permission.value)
+
 app.include_router(api_router)
 
 # CORS Configuration - Restrict to specific origins in production
