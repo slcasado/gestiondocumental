@@ -219,10 +219,10 @@ export default function ApiTokenManagement() {
                       </div>
                     </TableCell>
                     <TableCell className="text-slate-600 text-sm">
-                      {formatDate(token.created_at)}
+                      {formatDateTimeSpanish(token.created_at)}
                     </TableCell>
                     <TableCell className="text-slate-600 text-sm">
-                      {token.last_used ? formatDate(token.last_used) : 'Nunca'}
+                      {token.last_used ? formatDateTimeSpanish(token.last_used) : 'Nunca'}
                     </TableCell>
                     <TableCell className="text-right">
                       <Button
