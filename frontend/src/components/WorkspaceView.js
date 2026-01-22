@@ -228,7 +228,9 @@ export default function WorkspaceView() {
         <Card className="shadow-sm">
           <CardHeader>
             <CardTitle>Documentos</CardTitle>
-            <CardDescription>{filteredDocuments.length} documento(s) encontrado(s)</CardDescription>
+            <CardDescription>
+              Mostrando {paginatedDocuments.length > 0 ? ((currentPage - 1) * pageSize) + 1 : 0} - {Math.min(currentPage * pageSize, filteredDocuments.length)} de {filteredDocuments.length} documento(s)
+            </CardDescription>
           </CardHeader>
           <CardContent>
             {loading ? (
@@ -236,18 +238,18 @@ export default function WorkspaceView() {
             ) : filteredDocuments.length === 0 ? (
               <p className="text-center py-8 text-slate-500">No hay documentos</p>
             ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Nombre</TableHead>
-                    <TableHead>Ruta</TableHead>
-                    {visibleFields.map(field => (
-                      <TableHead key={field.id}>{field.name}</TableHead>
-                    ))}
-                    <TableHead>Fecha</TableHead>
-                    <TableHead className="text-right">Acciones</TableHead>
-                  </TableRow>
-                </TableHeader>
+              <>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Nombre</TableHead>
+                      {visibleFields.map(field => (
+                        <TableHead key={field.id}>{field.name}</TableHead>
+                      ))}
+                      <TableHead>Fecha</TableHead>
+                      <TableHead className="text-right">Acciones</TableHead>
+                    </TableRow>
+                  </TableHeader>
                 <TableBody>
                   {filteredDocuments.map((doc) => (
                     <TableRow key={doc.id} data-testid={`document-row-${doc.id}`}>
