@@ -41,7 +41,7 @@ export default function LoginPage() {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-sm font-medium uppercase tracking-wider text-slate-500">Email</Label>
+                <Label htmlFor="email" className="text-sm font-medium uppercase tracking-wider text-slate-500">Usuario</Label>
                 <Input
                   id="email"
                   type="text"
