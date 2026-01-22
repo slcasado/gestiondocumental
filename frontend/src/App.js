@@ -47,6 +47,10 @@ function AppRoutes() {
         element={user ? <Navigate to="/dashboard" replace /> : <LoginPage />}
       />
       <Route
+        path="/public/:publicUrl"
+        element={<PublicDocumentViewer />}
+      />
+      <Route
         path="/dashboard"
         element={
           <ProtectedRoute>
