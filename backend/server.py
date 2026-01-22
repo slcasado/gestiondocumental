@@ -449,11 +449,32 @@ async def list_documents(workspace_id: str, current_user: User = Depends(get_cur
     return documents
 
 @api_router.post("/workspaces/{workspace_id}/documents", response_model=Document)
-async def create_document(workspace_id: str, doc_data: DocumentCreate, current_user: User = Depends(get_current_user)):
+@limiter.limit(RATE_LIMIT_API)
+async def create_document(request: Request, workspace_id: str, doc_data: DocumentCreate, current_user: User = Depends(get_current_user)):
+    client_ip = get_remote_address(request)
+    
     # Check workspace exists
     workspace = await db.workspaces.find_one({"id": workspace_id})
     if not workspace:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Workspace not found")
+    
+    # Sanitize inputs
+    file_name = sanitize_string(doc_data.file_name, 255)
+    file_path = sanitize_string(doc_data.file_path, 500)
+    
+    # Validate file path
+    if not validate_file_path(file_path):
+        log_security_event("INVALID_FILE_PATH", f"Attempted path traversal: {file_path}", client_ip)
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid file path")
+    
+    # Sanitize and validate metadata
+    metadata = sanitize_metadata(doc_data.metadata)
+    
+    # Check metadata size
+    import json
+    metadata_size = len(json.dumps(metadata))
+    if metadata_size > MAX_METADATA_SIZE:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Metadata too large")
     
     public_url = str(uuid.uuid4())
     now = datetime.now(timezone.utc)
@@ -461,15 +482,17 @@ async def create_document(workspace_id: str, doc_data: DocumentCreate, current_u
     new_doc = {
         "id": str(uuid.uuid4()),
         "workspace_id": workspace_id,
-        "file_path": doc_data.file_path,
-        "file_name": doc_data.file_name,
+        "file_path": file_path,
+        "file_name": file_name,
         "public_url": public_url,
-        "metadata": doc_data.metadata,
+        "metadata": metadata,
         "created_at": now.isoformat(),
         "updated_at": now.isoformat()
     }
     
     await db.documents.insert_one(new_doc)
+    log_document_access(current_user.id, new_doc["id"], "CREATE", client_ip)
+    
     new_doc['created_at'] = now
     new_doc['updated_at'] = now
     return Document(**new_doc)
