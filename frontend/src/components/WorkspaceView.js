@@ -351,7 +351,7 @@ export default function WorkspaceView() {
                             variant={currentPage === pageNum ? "default" : "outline"}
                             size="sm"
                             onClick={() => goToPage(pageNum)}
-                            className={currentPage === pageNum ? "bg-primary" : ""}
+                            className={currentPage === pageNum ? "bg-costa-yellow text-costa-blue hover:bg-costa-yellow/90" : "border-costa-blue-light hover:bg-costa-blue-light/30"}
                             data-testid={`page-${pageNum}-button`}
                           >
                             {pageNum}
