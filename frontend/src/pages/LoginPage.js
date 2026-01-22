@@ -5,8 +5,9 @@ import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Checkbox } from '../components/ui/checkbox';
-import { FileText } from 'lucide-react';
 import { toast } from 'sonner';
+
+const LOGO_URL = "https://customer-assets.emergentagent.com/job_a739615c-f1b8-4bd3-af53-bfce43a6f5fc/artifacts/23euucvr_logo%20costa%20doc.png";
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -37,13 +38,13 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
       <div className="w-full max-w-md px-6">
-        {/* Logo and Title */}
+        {/* Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-primary/10 mb-4">
-            <FileText className="w-10 h-10 text-primary" />
-          </div>
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">Costa_Doc</h1>
-          <p className="text-slate-600">Sistema de Gestión de Documentos</p>
+          <img 
+            src={LOGO_URL} 
+            alt="Costa Doc - Gestión Documental" 
+            className="h-24 mx-auto"
+          />
         </div>
 
         {/* Login Card */}
