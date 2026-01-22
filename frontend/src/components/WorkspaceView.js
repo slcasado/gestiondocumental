@@ -330,7 +330,14 @@ export default function WorkspaceView() {
                           <Button
                             size="sm"
                             variant="ghost"
-                            onClick={() => window.open(api.getDocumentUrl(doc.id), '_blank')}
+                            onClick={() => {
+                              // Check if it's an external URL
+                              if (doc.file_path.startsWith('http://') || doc.file_path.startsWith('https://')) {
+                                window.open(doc.file_path, '_blank');
+                              } else {
+                                window.open(api.getDocumentUrl(doc.id), '_blank');
+                              }
+                            }}
                             data-testid={`view-document-${doc.id}`}
                           >
                             <ExternalLink className="h-4 w-4" />
