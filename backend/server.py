@@ -167,14 +167,28 @@ async def list_users(current_user: User = Depends(get_admin_user)):
     return users
 
 @api_router.post("/users", response_model=User)
-async def create_user(user_data: UserCreate, current_user: User = Depends(get_admin_user)):
-    existing = await db.users.find_one({"email": user_data.email})
+@limiter.limit(RATE_LIMIT_API)
+async def create_user(request: Request, user_data: UserCreate, current_user: User = Depends(get_admin_user)):
+    client_ip = get_remote_address(request)
+    
+    # Sanitize and validate input
+    email = sanitize_string(user_data.email, 100).lower()
+    
+    # Check email format
+    if '@' not in email or len(email) < 3:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid email format")
+    
+    # Validate password strength
+    if len(user_data.password) < 8:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Password must be at least 8 characters")
+    
+    existing = await db.users.find_one({"email": email})
     if existing:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email already exists")
     
     new_user = {
         "id": str(uuid.uuid4()),
-        "email": user_data.email,
+        "email": email,
         "password_hash": get_password_hash(user_data.password),
         "role": user_data.role.value,
         "first_login": True,
@@ -183,6 +197,8 @@ async def create_user(user_data: UserCreate, current_user: User = Depends(get_ad
     }
     
     await db.users.insert_one(new_user)
+    log_admin_action(current_user.id, "CREATE_USER", email, client_ip)
+    
     new_user.pop('password_hash')
     new_user['created_at'] = datetime.fromisoformat(new_user['created_at'])
     return User(**new_user)
