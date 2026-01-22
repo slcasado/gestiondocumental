@@ -91,14 +91,21 @@ export default function PublicDocumentViewer() {
       <div className="max-w-7xl mx-auto p-4">
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           {pdfUrl && (
-            <iframe
-              src={`${pdfUrl}#toolbar=0&navpanes=0`}
+            <object
+              data={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0`}
+              type="application/pdf"
               className="w-full"
               style={{ height: 'calc(100vh - 140px)', minHeight: '600px' }}
-              title="Documento PDF"
-              onContextMenu={(e) => e.preventDefault()}
-              data-testid="pdf-viewer-iframe"
-            />
+              aria-label="Documento PDF"
+            >
+              <iframe
+                src={`${pdfUrl}#toolbar=0&navpanes=0`}
+                className="w-full"
+                style={{ height: 'calc(100vh - 140px)', minHeight: '600px' }}
+                title="Documento PDF"
+                data-testid="pdf-viewer-iframe"
+              />
+            </object>
           )}
         </div>
         
@@ -106,7 +113,7 @@ export default function PublicDocumentViewer() {
         <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
           <p className="text-sm text-amber-800">
             <AlertCircle className="inline h-4 w-4 mr-2" />
-            Este documento es de solo visualización. La descarga está deshabilitada por seguridad.
+            Este documento es de solo visualización. La descarga está deshabilitada por seguridad. Use el botón de imprimir para obtener una copia.
           </p>
         </div>
       </div>
