@@ -108,29 +108,42 @@ export default function TeamManagement() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {teams.map((team) => (
-                    <TableRow key={team.id} data-testid={`team-row-${team.id}`}>
-                      <TableCell className="font-medium">{team.name}</TableCell>
-                      <TableCell className="text-slate-600">{team.description || '-'}</TableCell>
-                      <TableCell>{team.user_ids?.length || 0} usuario(s)</TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
-                          <Button size="sm" variant="ghost" onClick={() => handleEdit(team)} data-testid={`edit-team-${team.id}`}>
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => handleDelete(team.id)}
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                            data-testid={`delete-team-${team.id}`}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {teams.map((team) => {
+                    const teamUsers = users.filter(u => team.user_ids?.includes(u.id));
+                    return (
+                      <TableRow key={team.id} data-testid={`team-row-${team.id}`}>
+                        <TableCell className="font-medium">{team.name}</TableCell>
+                        <TableCell className="text-slate-600">{team.description || '-'}</TableCell>
+                        <TableCell>
+                          <div className="flex flex-col gap-1">
+                            <span className="font-medium">{team.user_ids?.length || 0} usuario(s)</span>
+                            {teamUsers.length > 0 && (
+                              <div className="text-xs text-slate-500">
+                                {teamUsers.slice(0, 3).map(u => u.email).join(', ')}
+                                {teamUsers.length > 3 && ` +${teamUsers.length - 3} más`}
+                              </div>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex justify-end gap-2">
+                            <Button size="sm" variant="ghost" onClick={() => handleEdit(team)} data-testid={`edit-team-${team.id}`}>
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => handleDelete(team.id)}
+                              className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                              data-testid={`delete-team-${team.id}`}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
                 </TableBody>
               </Table>
             </CardContent>
