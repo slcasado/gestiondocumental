@@ -56,7 +56,7 @@ export default function Sidebar({ workspaces }) {
                       variant="ghost"
                       className={cn(
                         "w-full justify-start",
-                        isActive('/admin/users') && "bg-slate-100 text-primary"
+                        isActive('/admin/users') && "bg-costa-yellow/20 text-costa-blue font-medium"
                       )}
                       data-testid="admin-users-link"
                     >
@@ -69,7 +69,7 @@ export default function Sidebar({ workspaces }) {
                       variant="ghost"
                       className={cn(
                         "w-full justify-start",
-                        isActive('/admin/teams') && "bg-slate-100 text-primary"
+                        isActive('/admin/teams') && "bg-costa-yellow/20 text-costa-blue font-medium"
                       )}
                       data-testid="admin-teams-link"
                     >
@@ -82,7 +82,7 @@ export default function Sidebar({ workspaces }) {
                       variant="ghost"
                       className={cn(
                         "w-full justify-start",
-                        isActive('/admin/metadata') && "bg-slate-100 text-primary"
+                        isActive('/admin/metadata') && "bg-costa-yellow/20 text-costa-blue font-medium"
                       )}
                       data-testid="admin-metadata-link"
                     >
@@ -95,7 +95,7 @@ export default function Sidebar({ workspaces }) {
                       variant="ghost"
                       className={cn(
                         "w-full justify-start",
-                        isActive('/admin/workspaces') && "bg-slate-100 text-primary"
+                        isActive('/admin/workspaces') && "bg-costa-yellow/20 text-costa-blue font-medium"
                       )}
                       data-testid="admin-workspaces-link"
                     >
