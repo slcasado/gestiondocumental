@@ -220,7 +220,7 @@ export default function WorkspaceView() {
           </div>
           <Button
             onClick={() => setAddDocModalOpen(true)}
-            className="bg-primary hover:bg-primary/90"
+            className="bg-costa-blue hover:bg-costa-blue/90 text-white"
             data-testid="add-document-button"
           >
             <Plus className="mr-2 h-4 w-4" />
