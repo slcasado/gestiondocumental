@@ -649,14 +649,19 @@ async def create_document(request: Request, workspace_id: str, doc_data: Documen
     }
     
     await db.documents.insert_one(new_doc)
-    log_document_access(current_user.id, new_doc["id"], "CREATE", client_ip)
+    creator_id = auth.user.id if auth.user else f"api_token:{auth.api_token['id']}"
+    log_document_access(creator_id, new_doc["id"], "CREATE", client_ip)
     
     new_doc['created_at'] = now
     new_doc['updated_at'] = now
     return Document(**new_doc)
 
 @api_router.put("/documents/{doc_id}", response_model=Document)
-async def update_document(doc_id: str, doc_data: DocumentUpdate, current_user: User = Depends(get_current_user)):
+async def update_document(doc_id: str, doc_data: DocumentUpdate, auth: AuthResult = Depends(get_current_user_or_api_token)):
+    # Check permission for API tokens
+    if auth.is_api_token and not auth.has_permission("documents:update"):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="API token lacks documents:update permission")
+    
     update_dict = {k: v for k, v in doc_data.model_dump().items() if v is not None}
     if not update_dict:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No fields to update")
@@ -675,7 +680,11 @@ async def update_document(doc_id: str, doc_data: DocumentUpdate, current_user: U
     return Document(**updated_doc)
 
 @api_router.delete("/documents/{doc_id}")
-async def delete_document(doc_id: str, current_user: User = Depends(get_current_user)):
+async def delete_document(doc_id: str, auth: AuthResult = Depends(get_current_user_or_api_token)):
+    # Check permission for API tokens
+    if auth.is_api_token and not auth.has_permission("documents:delete"):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="API token lacks documents:delete permission")
+    
     result = await db.documents.delete_one({"id": doc_id})
     if result.deleted_count == 0:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Document not found")
