@@ -125,6 +125,19 @@ export default function WorkspaceView() {
     }
   };
 
+  const handleShowPublicUrl = (doc) => {
+    setSelectedDocForUrl(doc);
+    setPublicUrlModalOpen(true);
+  };
+
+  const copyPublicUrl = () => {
+    if (selectedDocForUrl) {
+      const publicUrl = `${window.location.origin}/public/${selectedDocForUrl.public_url}`;
+      navigator.clipboard.writeText(publicUrl);
+      toast.success('URL pública copiada al portapapeles');
+    }
+  };
+
   const getVisibleMetadataFields = () => {
     if (!workspace?.metadata_ids) return [];
     return workspace.metadata_ids
