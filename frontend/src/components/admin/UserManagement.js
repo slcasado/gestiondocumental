@@ -9,12 +9,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Plus, Edit, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '../../utils/api';
-import Sidebar from '../Sidebar';
 
 export default function UserManagement() {
   const [users, setUsers] = useState([]);
   const [teams, setTeams] = useState([]);
-  const [workspaces, setWorkspaces] = useState([]);
   const [editingUser, setEditingUser] = useState(null);
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [formData, setFormData] = useState({ email: '', password: '', role: 'user', team_ids: [] });
@@ -25,14 +23,12 @@ export default function UserManagement() {
 
   const loadData = async () => {
     try {
-      const [usersRes, teamsRes, workspacesRes] = await Promise.all([
+      const [usersRes, teamsRes] = await Promise.all([
         api.getUsers(),
-        api.getTeams(),
-        api.getWorkspaces()
+        api.getTeams()
       ]);
       setUsers(usersRes.data);
       setTeams(teamsRes.data);
-      setWorkspaces(workspacesRes.data);
     } catch (error) {
       toast.error('Error al cargar datos');
     }
@@ -85,71 +81,68 @@ export default function UserManagement() {
   };
 
   return (
-    <>
-      <Sidebar workspaces={workspaces} />
-      <div className="flex-1 md:pl-64 min-h-screen bg-slate-50/50" data-testid="user-management">
-        <div className="p-8">
-          <div className="flex justify-between items-center mb-6">
-            <div>
-              <h1 className="text-4xl font-bold tracking-tight mb-2">Usuarios</h1>
-              <p className="text-slate-600">Gestión de usuarios del sistema</p>
-            </div>
-            <Button onClick={handleAddNew} className="bg-primary hover:bg-primary/90" data-testid="add-user-button">
-              <Plus className="mr-2 h-4 w-4" />
-              Nuevo Usuario
-            </Button>
+    <div className="flex-1 md:pl-64 min-h-screen bg-slate-50/50" data-testid="user-management">
+      <div className="p-8">
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h1 className="text-4xl font-bold tracking-tight mb-2">Usuarios</h1>
+            <p className="text-slate-600">Gestión de usuarios del sistema</p>
           </div>
-
-          <Card className="shadow-sm">
-            <CardHeader>
-              <CardTitle>Lista de Usuarios</CardTitle>
-              <CardDescription>{users.length} usuario(s) registrado(s)</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Rol</TableHead>
-                    <TableHead>Equipos</TableHead>
-                    <TableHead>Primer Login</TableHead>
-                    <TableHead className="text-right">Acciones</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {users.map((user) => (
-                    <TableRow key={user.id} data-testid={`user-row-${user.id}`}>
-                      <TableCell className="font-medium">{user.email}</TableCell>
-                      <TableCell>
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${user.role === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}`}>
-                          {user.role}
-                        </span>
-                      </TableCell>
-                      <TableCell>{user.team_ids?.length || 0} equipo(s)</TableCell>
-                      <TableCell>{user.first_login ? 'Sí' : 'No'}</TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
-                          <Button size="sm" variant="ghost" onClick={() => handleEdit(user)} data-testid={`edit-user-${user.id}`}>
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => handleDelete(user.id)}
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                            data-testid={`delete-user-${user.id}`}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
+          <Button onClick={handleAddNew} className="bg-primary hover:bg-primary/90" data-testid="add-user-button">
+            <Plus className="mr-2 h-4 w-4" />
+            Nuevo Usuario
+          </Button>
         </div>
+
+        <Card className="shadow-sm">
+          <CardHeader>
+            <CardTitle>Lista de Usuarios</CardTitle>
+            <CardDescription>{users.length} usuario(s) registrado(s)</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Rol</TableHead>
+                  <TableHead>Equipos</TableHead>
+                  <TableHead>Primer Login</TableHead>
+                  <TableHead className="text-right">Acciones</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {users.map((user) => (
+                  <TableRow key={user.id} data-testid={`user-row-${user.id}`}>
+                    <TableCell className="font-medium">{user.email}</TableCell>
+                    <TableCell>
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${user.role === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}`}>
+                        {user.role}
+                      </span>
+                    </TableCell>
+                    <TableCell>{user.team_ids?.length || 0} equipo(s)</TableCell>
+                    <TableCell>{user.first_login ? 'Sí' : 'No'}</TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-2">
+                        <Button size="sm" variant="ghost" onClick={() => handleEdit(user)} data-testid={`edit-user-${user.id}`}>
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => handleDelete(user.id)}
+                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                          data-testid={`delete-user-${user.id}`}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
       </div>
 
       <Dialog open={!!editingUser || addModalOpen} onOpenChange={() => { setEditingUser(null); setAddModalOpen(false); }}>
@@ -197,6 +190,6 @@ export default function UserManagement() {
           </div>
         </DialogContent>
       </Dialog>
-    </>
+    </div>
   );
 }
