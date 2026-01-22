@@ -520,13 +520,18 @@ async def delete_metadata(meta_id: str, current_user: User = Depends(get_admin_u
 
 # WORKSPACE ENDPOINTS
 @api_router.get("/workspaces", response_model=List[Workspace])
-async def list_workspaces(current_user: User = Depends(get_current_user)):
-    if current_user.role == UserRole.ADMIN:
+async def list_workspaces(auth: AuthResult = Depends(get_current_user_or_api_token)):
+    # Check permission for API tokens
+    if auth.is_api_token and not auth.has_permission("workspaces:read"):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="API token lacks workspaces:read permission")
+    
+    # API tokens and admins see all workspaces
+    if auth.is_api_token or (auth.user and auth.user.role == UserRole.ADMIN):
         workspaces = await db.workspaces.find({}, {"_id": 0}).to_list(1000)
     else:
         # Filter by user's teams
         workspaces = await db.workspaces.find(
-            {"team_ids": {"$in": current_user.team_ids}},
+            {"team_ids": {"$in": auth.user.team_ids}},
             {"_id": 0}
         ).to_list(1000)
     
