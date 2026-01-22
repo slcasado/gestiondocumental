@@ -276,8 +276,16 @@ def main():
     tester = PDFDocumentSystemTester()
     
     # Test 1: Login with default admin credentials
-    if not tester.test_login("admin", "admin"):
-        print("❌ Login failed, stopping tests")
+    # Try with original password first, then with changed password
+    login_success = False
+    if tester.test_login("admin", "admin"):
+        login_success = True
+    elif tester.test_login("admin", "newpassword123"):
+        login_success = True
+        print("   Using previously changed password")
+    
+    if not login_success:
+        print("❌ Login failed with both passwords, stopping tests")
         return 1
 
     # Test 2: Get current user info
