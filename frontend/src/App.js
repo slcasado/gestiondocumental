@@ -8,6 +8,7 @@ import UserManagement from './components/admin/UserManagement';
 import TeamManagement from './components/admin/TeamManagement';
 import MetadataManagement from './components/admin/MetadataManagement';
 import WorkspaceManagement from './components/admin/WorkspaceManagement';
+import PublicDocumentViewer from './pages/PublicDocumentViewer';
 import MainLayout from './components/MainLayout';
 import '@/App.css';
 
