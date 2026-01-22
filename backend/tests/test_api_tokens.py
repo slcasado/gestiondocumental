@@ -449,8 +449,9 @@ class TestApiTokenWithFullPermissions:
             "Content-Type": "application/json"
         }
         
+        # Use allowed domain or local path format
         doc_data = {
-            "file_path": "https://example.com/api-test-doc.pdf",
+            "file_path": "https://hcostadealmeria.net/api-test-doc.pdf",
             "file_name": "TEST_ApiTokenDoc.pdf",
             "metadata": {"created_by": "api_token"}
         }
