@@ -566,10 +566,15 @@ async def search_documents(request: Request, q: str, current_user: User = Depend
     return documents
 
 @api_router.get("/documents/{doc_id}/view")
-async def view_document(doc_id: str, current_user: User = Depends(get_current_user)):
+@limiter.limit(RATE_LIMIT_API)
+async def view_document(request: Request, doc_id: str, current_user: User = Depends(get_current_user)):
+    client_ip = get_remote_address(request)
+    
     doc = await db.documents.find_one({"id": doc_id}, {"_id": 0})
     if not doc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Document not found")
+    
+    log_document_access(current_user.id, doc_id, "VIEW", client_ip)
     
     file_path_str = doc["file_path"]
     
@@ -581,6 +586,18 @@ async def view_document(doc_id: str, current_user: User = Depends(get_current_us
     
     # Local file handling
     file_path = Path(file_path_str)
+    
+    # Additional security check for path traversal
+    try:
+        file_path = file_path.resolve()
+        UPLOAD_DIR.resolve()
+        if not str(file_path).startswith(str(UPLOAD_DIR.resolve())):
+            log_security_event("PATH_TRAVERSAL_ATTEMPT", f"Attempted access to: {file_path}", client_ip)
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Access denied")
+    except Exception as e:
+        log_security_event("FILE_ACCESS_ERROR", f"Error accessing file: {str(e)}", client_ip)
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid file path")
+    
     if not file_path.exists():
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="File not found")
     
