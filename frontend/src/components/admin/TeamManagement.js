@@ -138,10 +138,10 @@ export default function TeamManagement() {
         </div>
 
       <Dialog open={!!editingTeam || addModalOpen} onOpenChange={() => { setEditingTeam(null); setAddModalOpen(false); }}>
-        <DialogContent data-testid="team-form-modal">
+        <DialogContent className="max-w-2xl" data-testid="team-form-modal">
           <DialogHeader>
             <DialogTitle>{editingTeam ? 'Editar Equipo' : 'Nuevo Equipo'}</DialogTitle>
-            <DialogDescription>Complete los datos del equipo</DialogDescription>
+            <DialogDescription>Complete los datos del equipo y asigne usuarios</DialogDescription>
           </DialogHeader>
           <div className="space-y-4 mt-4">
             <div>
@@ -159,6 +159,37 @@ export default function TeamManagement() {
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 data-testid="team-description-input"
               />
+            </div>
+            <div>
+              <Label>Usuarios Asignados</Label>
+              <div className="border rounded-md p-4 max-h-48 overflow-y-auto space-y-2">
+                {users.length === 0 ? (
+                  <p className="text-sm text-slate-500">No hay usuarios disponibles</p>
+                ) : (
+                  users.map((user) => (
+                    <div key={user.id} className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        id={`user-${user.id}`}
+                        checked={formData.user_ids.includes(user.id)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setFormData({ ...formData, user_ids: [...formData.user_ids, user.id] });
+                          } else {
+                            setFormData({ ...formData, user_ids: formData.user_ids.filter(id => id !== user.id) });
+                          }
+                        }}
+                        className="rounded border-slate-300 text-primary focus:ring-primary"
+                        data-testid={`user-checkbox-${user.id}`}
+                      />
+                      <label htmlFor={`user-${user.id}`} className="text-sm cursor-pointer flex-1">
+                        {user.email}
+                        <span className="ml-2 text-xs text-slate-500">({user.role})</span>
+                      </label>
+                    </div>
+                  ))
+                )}
+              </div>
             </div>
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => { setEditingTeam(null); setAddModalOpen(false); }}>Cancelar</Button>
