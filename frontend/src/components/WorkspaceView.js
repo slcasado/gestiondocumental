@@ -23,6 +23,8 @@ export default function WorkspaceView() {
   const [filteredDocuments, setFilteredDocuments] = useState([]);
   const [editingDoc, setEditingDoc] = useState(null);
   const [editFormData, setEditFormData] = useState({});
+  const [editMetadataText, setEditMetadataText] = useState('{}');
+  const [editMetadataError, setEditMetadataError] = useState('');
   const [addDocModalOpen, setAddDocModalOpen] = useState(false);
   const [newDocData, setNewDocData] = useState({ file_name: '', file_path: '', metadata: {} });
   const [newDocMetadataText, setNewDocMetadataText] = useState('{}');
