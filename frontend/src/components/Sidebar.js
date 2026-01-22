@@ -32,7 +32,7 @@ export default function Sidebar({ workspaces }) {
                     variant="ghost"
                     className={cn(
                       "w-full justify-start",
-                      isActive(`/workspace/${workspace.id}`) && "bg-slate-100 text-primary"
+                      isActive(`/workspace/${workspace.id}`) && "bg-costa-yellow/20 text-costa-blue font-medium"
                     )}
                     data-testid={`workspace-link-${workspace.id}`}
                   >
