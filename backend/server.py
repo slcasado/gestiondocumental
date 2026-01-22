@@ -115,9 +115,18 @@ async def shutdown_db_client():
 
 # AUTH ENDPOINTS
 @api_router.post("/auth/login", response_model=TokenResponse)
-async def login(request: LoginRequest):
-    user_doc = await db.users.find_one({"email": request.email}, {"_id": 0})
-    if not user_doc or not verify_password(request.password, user_doc["password_hash"]):
+@limiter.limit(RATE_LIMIT_LOGIN)
+async def login(request: Request, login_request: LoginRequest):
+    client_ip = get_remote_address(request)
+    
+    # Sanitize input
+    email = sanitize_string(login_request.email, 100)
+    
+    user_doc = await db.users.find_one({"email": email}, {"_id": 0})
+    
+    if not user_doc or not verify_password(login_request.password, user_doc["password_hash"]):
+        log_auth_attempt(email, False, client_ip)
+        log_security_event("FAILED_LOGIN", f"Failed login attempt for user: {email}", client_ip)
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
     
     if isinstance(user_doc.get('created_at'), str):
@@ -125,6 +134,8 @@ async def login(request: LoginRequest):
     
     user = User(**user_doc)
     access_token = create_access_token(data={"sub": user.id})
+    
+    log_auth_attempt(email, True, client_ip)
     
     return TokenResponse(access_token=access_token, token_type="bearer", user=user)
 
