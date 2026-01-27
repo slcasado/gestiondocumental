@@ -175,6 +175,39 @@ yarn build
 
 Esto genera `/opt/costa-doc/frontend/build/` con los archivos estáticos.
 
+## 7.1 Generar Paquete Precompilado (Linux)
+
+Si quieres instalar en un servidor Linux sin volver a instalar dependencias de Python/Node, puedes generar un bundle con todo compilado.
+
+### En la máquina de build (con Python 3 + Yarn instalados)
+
+```bash
+cd /ruta/al/repositorio/gestiondocumental
+./scripts/build_linux_bundle.sh
+```
+
+Esto crea `dist/costa-doc-linux-bundle.tar.gz` con:
+- Backend + virtualenv con dependencias instaladas.
+- Frontend ya compilado en `build/`.
+
+### En el servidor destino (Linux)
+
+1. Copia el tarball al servidor.
+2. Extrae en la raíz (requiere sudo):
+   ```bash
+   sudo tar -xzf costa-doc-linux-bundle.tar.gz -C /
+   ```
+3. Configura `.env`:
+   - `/opt/costa-doc/backend/.env`
+   - `/opt/costa-doc/frontend/.env`
+4. Levanta el backend:
+   ```bash
+   /opt/costa-doc/backend/venv/bin/uvicorn server:app --host 0.0.0.0 --port 8001
+   ```
+5. Sirve el frontend con Nginx desde `/opt/costa-doc/frontend/build`.
+
+> Nota: El paquete asume que se extrae en `/opt/costa-doc` para mantener la ruta del virtualenv.
+
 ## 8. Probar Manualmente (Desarrollo)
 
 Abre 2 terminales:
